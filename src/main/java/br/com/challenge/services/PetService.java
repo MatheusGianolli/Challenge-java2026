@@ -21,7 +21,7 @@ public class PetService {
         return petRepository.findAll(pageable);
     }
 
-    // OLHA A MUDANÇA AQUI: Agora usamos PetDTO.Request
+    // foi usado PetDTO
     public Pet cadastrar(PetDTO.Request dto) {
         Tutor responsavel = tutorRepository.findById(dto.responsavelId())
                 .orElseThrow(() -> new ResourceNotFoundException("Responsável não encontrado no banco de dados"));

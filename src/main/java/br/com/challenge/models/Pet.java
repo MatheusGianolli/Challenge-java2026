@@ -41,7 +41,7 @@ public class Pet {
     private LocalDateTime dataCadastro;
 
 
-    // Getters e Setters (padrão, sem código complexo)
+    
     public Pet() {
     }
 }

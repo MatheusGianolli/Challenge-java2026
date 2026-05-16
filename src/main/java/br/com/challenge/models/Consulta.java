@@ -1,11 +1,15 @@
 package br.com.challenge.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_consultas")
+@Getter
+@Setter// novamente usando o lombok para deixar o codigo mais limpo e menos volumoso onde ele é respomsavel pelos getters and setters
 public class Consulta {
 
     @Id
@@ -53,29 +57,5 @@ public class Consulta {
     // Construtor vazio exigido pelo JPA
     public Consulta() {}
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Tutor getResponsavel() { return responsavel; }
-    public void setResponsavel(Tutor responsavel) { this.responsavel = responsavel; }
-    public Pet getPet() { return pet; }
-    public void setPet(Pet pet) { this.pet = pet; }
-    public Clinica getClinica() { return clinica; }
-    public void setClinica(Clinica clinica) { this.clinica = clinica; }
-    public Veterinario getVeterinario() { return veterinario; }
-    public void setVeterinario(Veterinario veterinario) { this.veterinario = veterinario; }
-    public LocalDateTime getDataCriacao() { return dataCriacao; }
-    public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
-    public LocalDateTime getDataPrevista() { return dataPrevista; }
-    public void setDataPrevista(LocalDateTime dataPrevista) { this.dataPrevista = dataPrevista; }
-    public LocalDateTime getRetornoPrevisto() { return retornoPrevisto; }
-    public void setRetornoPrevisto(LocalDateTime retornoPrevisto) { this.retornoPrevisto = retornoPrevisto; }
-    public String getTipoConsulta() { return tipoConsulta; }
-    public void setTipoConsulta(String tipoConsulta) { this.tipoConsulta = tipoConsulta; }
-    public String getDescricaoSintomas() { return descricaoSintomas; }
-    public void setDescricaoSintomas(String descricaoSintomas) { this.descricaoSintomas = descricaoSintomas; }
-    public String getDiagnostico() { return diagnostico; }
-    public void setDiagnostico(String diagnostico) { this.diagnostico = diagnostico; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+
 }

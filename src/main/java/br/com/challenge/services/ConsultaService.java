@@ -1,5 +1,5 @@
 package br.com.challenge.services;
-
+import java.time.LocalDateTime;
 import br.com.challenge.dtos.ConsultaRequestDTO;
 import br.com.challenge.exceptions.BusinessRuleException;
 import br.com.challenge.exceptions.ResourceNotFoundException;

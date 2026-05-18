@@ -54,19 +54,19 @@ Para a validação das regras de negócio, todos os endpoints foram testados. O 
 ![Print Cadastro Tutor](./documentos/01_post_tutor.png)
 
 ### 2. Listagem de Tutores com Paginação (GET)
-![Print GET Tutores](documentos/02_get_tutores.png)
+![Print GET Tutores](./documentos/02_get_tutores.png)
 
 ### 3. Cadastro de Clínica (POST)
-![Print Cadastro Clinica](documentos/03_post_clinica.png)
+![Print Cadastro Clinica](./documentos/03_post_clinica.png)
 
 ### 4. Cadastro de Veterinário (POST)
-![Print Cadastro Veterinario](documentos/04_post_veterinario.png)
+![Print Cadastro Veterinario](./documentos/04_post_veterinario.png)
 
 ### 5. Cadastro de Pet (POST)
-![Print Cadastro Pet](documentos/05_post_pet.png)
+![Print Cadastro Pet](./documentos/05_post_pet.png)
 
 ### 6. Agendamento de Consulta (POST)
-![Print Cadastro Consulta](documentos/06_post_consulta.png)
+![Print Cadastro Consulta](./documentos/06_post_consulta.png)
 
 ---
 

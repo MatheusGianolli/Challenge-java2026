@@ -75,7 +75,7 @@ Para a validação das regras de negócio, todos os endpoints foram testados. O 
 Conforme solicitado nos requisitos técnicos, a aplicação utiliza um mapeador global de exceções (`@RestControllerAdvice`). Quando um campo obrigatório viola as regras do Bean Validation (ex: enviar um campo obrigatório em branco), a API intercepta a requisição e retorna o Status **400 Bad Request** com os detalhes amigáveis do erro.
 
 **Prova do Tratamento de Exceções de Validação:**
--Como vemos no print abaixo caso o usuario esqueça de preencher um campo obrigatorio(no caso abaixo o nome ) graças a nossa excepition ele ira retornar um 404 bad request e sinalizara para o usuario que o campo é obrigayrio
+-Como vemos no print abaixo caso o usuario esqueça de preencher um campo obrigatorio(no caso abaixo o nome ) graças a nossa excepition ele ira retornar um 404 bad request e sinalizara para o usuario que o campo é obrigatorio
 ![Print Tratamento de Erros](./documentos/07_tratamento_erros.png)
 
 ---

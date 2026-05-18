@@ -51,7 +51,7 @@ Para a validação das regras de negócio, todos os endpoints foram testados. O 
 **Provas de Funcionamento das Rotas (Prints):**
 
 ### 1. Cadastro de Tutor (POST)
-![Print Cadastro Tutor](documentos/01_post_tutor.png)
+![Print Cadastro Tutor](./documentos/01_post_tutor.png)
 
 ### 2. Listagem de Tutores com Paginação (GET)
 ![Print GET Tutores](documentos/02_get_tutores.png)

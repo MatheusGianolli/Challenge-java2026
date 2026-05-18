@@ -29,7 +29,10 @@ API RESTful desenvolvida em Java com Spring Boot para o gerenciamento de clínic
 2. Importe o projeto na sua IDE (recomendado: IntelliJ IDEA).
 3. Aguarde a sincronização das dependências do Maven.
 4. Execute a classe principal `ChallengeApplication.java`.
-5. A API estará disponível e rodando na porta local: `http://localhost:8080`.
+5. Execute no botão verde logo ao lado de "	public static void main(String[] args) {"
+		SpringApplication.run(ChallengeApplication.class, args);
+	}
+6. A API estará disponível e rodando na porta local: `http://localhost:8080`.
 
 📖 Documentação da API (Swagger)
 A documentação interativa gerada automaticamente pelo Swagger contendo todos os endpoints, parâmetros e esquemas JSON pode ser acessada com a aplicação rodando no link:

@@ -69,6 +69,15 @@ Para a validação das regras de negócio, todos os endpoints foram testados. O 
 ![Print Cadastro Consulta](./documentos/06_post_consulta.png)
 
 ---
+---
+
+## ⚠️ Tratamento de Erros e Exceções (Validação Funcional)
+Conforme solicitado nos requisitos técnicos, a aplicação utiliza um mapeador global de exceções (`@RestControllerAdvice`). Quando um campo obrigatório viola as regras do Bean Validation (ex: enviar um campo obrigatório em branco), a API intercepta a requisição e retorna o Status **400 Bad Request** com os detalhes amigáveis do erro.
+
+**Prova do Tratamento de Exceções de Validação:**
+![Print Tratamento de Erros](./documentos/07_tratamento_erros.png)
+
+---
 
 ## 🗄️ Modelagem de Dados e Arquitetura
 

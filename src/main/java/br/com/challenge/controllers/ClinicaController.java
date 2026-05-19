@@ -35,7 +35,7 @@ public class ClinicaController {
         return ResponseEntity.ok(clinicas.map(ClinicaDTO.Response::new));
     }
 
-    // REQUISITO DA SPRINT: Busca com parâmetros
+    //  Busca com parâmetros
     @Operation(summary = "Busca uma clínica pelo nome")
     @GetMapping("/buscar")
     public ResponseEntity<Page<ClinicaDTO.Response>> buscarPorNome(

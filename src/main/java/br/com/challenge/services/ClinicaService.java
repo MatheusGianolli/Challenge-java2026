@@ -14,7 +14,6 @@ public class ClinicaService {
 
     @Autowired private ClinicaRepository repository;
 
-    // --- MÉTODOS DE LEITURA (READ) E BUSCA ---
     public Page<Clinica> listarTodas(Pageable pageable) {
         return repository.findAll(pageable);
     }
@@ -29,7 +28,7 @@ public class ClinicaService {
                 .orElseThrow(() -> new RuntimeException("Clínica não encontrada com o ID: " + id));
     }
 
-    // --- MÉTODO DE CRIAÇÃO (CREATE) ---
+
     public Clinica cadastrar(ClinicaDTO.Request dto) {
         Clinica clinica = new Clinica();
         clinica.setNome(dto.nome());
@@ -52,7 +51,7 @@ public class ClinicaService {
         return repository.save(clinica);
     }
 
-    // --- MÉTODO DE ATUALIZAÇÃO (UPDATE) ---
+
     public Clinica atualizar(Long id, ClinicaDTO.Request dto) {
         Clinica clinica = buscarPorId(id); // Garante que a clínica existe
 
@@ -74,7 +73,7 @@ public class ClinicaService {
         return repository.save(clinica);
     }
 
-    // --- MÉTODO DE EXCLUSÃO (DELETE) ---
+
     public void excluir(Long id) {
         Clinica clinica = buscarPorId(id); // Verifica se existe antes de excluir
         repository.delete(clinica);

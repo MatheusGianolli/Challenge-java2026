@@ -30,10 +30,31 @@ public class PetController {
         return ResponseEntity.ok(pets.map(PetDTO.Response::new));
     }
 
+    @Operation(summary = "Busca um pet pelo ID")
+    @GetMapping("/{id}")
+    public ResponseEntity<PetDTO.Response> detalhar(@PathVariable Long id) {
+        Pet pet = service.buscarPorId(id);
+        return ResponseEntity.ok(new PetDTO.Response(pet));
+    }
+
     @Operation(summary = "Cadastra um novo pet")
     @PostMapping
     public ResponseEntity<PetDTO.Response> cadastrar(@RequestBody @Valid PetDTO.Request dto) {
         Pet novoPet = service.cadastrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new PetDTO.Response(novoPet));
+    }
+
+    @Operation(summary = "Atualiza os dados de um pet existente")
+    @PutMapping("/{id}")
+    public ResponseEntity<PetDTO.Response> atualizar(@PathVariable Long id, @RequestBody @Valid PetDTO.Request dto) {
+        Pet petAtualizado = service.atualizar(id, dto);
+        return ResponseEntity.ok(new PetDTO.Response(petAtualizado));
+    }
+
+    @Operation(summary = "Exclui um pet logicamente")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }

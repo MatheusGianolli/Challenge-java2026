@@ -17,7 +17,7 @@ public record ConsultaResponseDTO(
         String diagnostico,
         String status
 ) {
-    // Construtor que transforma a Entidade no DTO automaticamente
+
     public ConsultaResponseDTO(Consulta c) {
         this(
                 c.getId(),

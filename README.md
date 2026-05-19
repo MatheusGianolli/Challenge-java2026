@@ -75,6 +75,14 @@ Demonstração da atualização do prontuário médico. A requisição insere o 
 Demonstração da exclusão lógica (Soft Delete). O registro não é apagado do banco de dados para manter o histórico médico íntegro, mas seu status é atualizado para `CANCELADA`.
 ![Cancelamento de Consulta](./documentos/08_delete_consulta.png)
 
+#### 9. Atualização de Dados do Pet (PUT)
+Demonstração da atualização das informações de um paciente (Pet). A requisição envia um novo payload JSON e o sistema sobrescreve os dados no banco de dados.
+![Atualização do Pet](./documentos/09_put_pet.png)
+
+#### 10. Exclusão de Pet (DELETE)
+Demonstração da remoção de um Pet do sistema. O endpoint recebe o ID via parâmetro na URL e deleta o registro correspondente do banco de dados.
+![Exclusão de Pet](./documentos/10_delete_pet.png)
+
 ---
 ---
 

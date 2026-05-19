@@ -30,10 +30,31 @@ public class TutorController {
         return ResponseEntity.ok(tutores.map(TutorDTO.Response::new));
     }
 
+    @Operation(summary = "Busca um tutor pelo ID")
+    @GetMapping("/{id}")
+    public ResponseEntity<TutorDTO.Response> detalhar(@PathVariable Long id) {
+        Tutor tutor = service.buscarPorId(id);
+        return ResponseEntity.ok(new TutorDTO.Response(tutor));
+    }
+
     @Operation(summary = "Cadastra um novo tutor")
     @PostMapping
     public ResponseEntity<TutorDTO.Response> cadastrar(@RequestBody @Valid TutorDTO.Request dto) {
         Tutor novoTutor = service.cadastrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new TutorDTO.Response(novoTutor));
+    }
+
+    @Operation(summary = "Atualiza os dados de um tutor existente")
+    @PutMapping("/{id}")
+    public ResponseEntity<TutorDTO.Response> atualizar(@PathVariable Long id, @RequestBody @Valid TutorDTO.Request dto) {
+        Tutor tutorAtualizado = service.atualizar(id, dto);
+        return ResponseEntity.ok(new TutorDTO.Response(tutorAtualizado));
+    }
+
+    @Operation(summary = "Exclui um tutor logicamente")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }

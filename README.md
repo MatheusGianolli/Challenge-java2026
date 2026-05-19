@@ -48,6 +48,11 @@ A documentação interativa gerada automaticamente pelo Swagger contendo todos o
 ## 🧪 Testes de Requisição (Postman)
 Para a validação das regras de negócio, todos os endpoints foram testados. O arquivo `.json` completo exportado da Collection do Postman encontra-se disponível na pasta `documentos/` deste repositório para importação e avaliação.
 
+## 🧪 Testes da API (Postman Collection)
+
+Para facilitar a avaliação e o teste dos endpoints, disponibilizei uma **Postman Collection** completa com todas as requisições (POST, GET, PUT e DELETE) já estruturadas e com  exemplos preenchidos.
+
+O arquivo `.json` da collection encontra-se dentro da pasta `documentos/` neste repositório. 
 **Provas de Funcionamento das Rotas (Prints):**
 
 ### 1. Cadastro de Tutor (POST)
@@ -56,7 +61,7 @@ Para a validação das regras de negócio, todos os endpoints foram testados. O 
 ### 2. Listagem de Tutores com Paginação (GET)
 ![Print GET Tutores](./documentos/02_get_tutores.png)
 
-### 3. Cadastro de Clínica (POST)![img.png](img.png)
+### 3. Cadastro de Clínica (POST)!
 ![Print Cadastro Clinica](./documentos/03_post_clinica.png)
 
 ### 4. Cadastro de Veterinário (POST)

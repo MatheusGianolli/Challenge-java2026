@@ -25,7 +25,7 @@ public class ClinicaController {
 
     // --- MÉTODOS GET (READ) ---
 
-    // REQUISITO DA SPRINT: Uso de Cache para otimizar requisições
+
     @Cacheable(value = "clinicas")
     @Operation(summary = "Lista todas as clínicas com paginação (Otimizado com Cache)")
     @GetMapping

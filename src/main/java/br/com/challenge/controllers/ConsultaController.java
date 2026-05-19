@@ -52,4 +52,14 @@ public class ConsultaController {
         service.cancelar(id);
         return ResponseEntity.noContent().build();
     }
+    @Operation(summary = "Atualiza o diagnóstico e finaliza a consulta")
+    @PutMapping("/{id}")
+    public ResponseEntity<ConsultaResponseDTO> atualizarDiagnostico(
+            @PathVariable Long id,
+            @RequestParam String diagnostico) {
+
+        // Chama o método do service passando null para a data de retorno só para simplificar
+        Consulta consultaAtualizada = service.atualizarDiagnostico(id, diagnostico, null);
+        return ResponseEntity.ok(new ConsultaResponseDTO(consultaAtualizada));
+    }
 }

@@ -23,6 +23,8 @@ public class ClinicaController {
 
     @Autowired private ClinicaService service;
 
+    // --- MÉTODOS GET (READ) ---
+
     // REQUISITO DA SPRINT: Uso de Cache para otimizar requisições
     @Cacheable(value = "clinicas")
     @Operation(summary = "Lista todas as clínicas com paginação (Otimizado com Cache)")
@@ -43,6 +45,15 @@ public class ClinicaController {
         return ResponseEntity.ok(clinicas.map(ClinicaDTO.Response::new));
     }
 
+    @Operation(summary = "Busca uma clínica pelo ID")
+    @GetMapping("/{id}")
+    public ResponseEntity<ClinicaDTO.Response> buscarPorId(@PathVariable Long id) {
+        Clinica clinica = service.buscarPorId(id);
+        return ResponseEntity.ok(new ClinicaDTO.Response(clinica));
+    }
+
+    // --- MÉTODO POST (CREATE) ---
+
     // Limpa o cache sempre que uma nova clínica é cadastrada
     @CacheEvict(value = "clinicas", allEntries = true)
     @Operation(summary = "Cadastra uma nova clínica")
@@ -51,4 +62,25 @@ public class ClinicaController {
         Clinica novaClinica = service.cadastrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ClinicaDTO.Response(novaClinica));
     }
+
+    // --- MÉTODO PUT (UPDATE) ---
+
+    @CacheEvict(value = "clinicas", allEntries = true)
+    @Operation(summary = "Atualiza os dados de uma clínica existente")
+    @PutMapping("/{id}")
+    public ResponseEntity<ClinicaDTO.Response> atualizar(@PathVariable Long id, @RequestBody @Valid ClinicaDTO.Request dto) {
+        Clinica clinicaAtualizada = service.atualizar(id, dto);
+        return ResponseEntity.ok(new ClinicaDTO.Response(clinicaAtualizada));
+    }
+
+    // --- MÉTODO DELETE (DELETE) ---
+
+    @CacheEvict(value = "clinicas", allEntries = true)
+    @Operation(summary = "Exclui uma clínica do sistema")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
+    }
 }
+

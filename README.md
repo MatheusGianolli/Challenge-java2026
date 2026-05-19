@@ -71,6 +71,9 @@ Para a validação das regras de negócio, todos os endpoints foram testados. O 
 #### 7. Lançamento de Diagnóstico de Consulta (PUT)
 Demonstração da atualização do prontuário médico. A requisição insere o diagnóstico final e o sistema altera automaticamente o status da consulta para `REALIZADA`.
 ![Lançamento de Diagnóstico](./documentos/07_put_consulta.png)
+#### 8. Cancelamento de Consulta (DELETE)
+Demonstração da exclusão lógica (Soft Delete). O registro não é apagado do banco de dados para manter o histórico médico íntegro, mas seu status é atualizado para `CANCELADA`.
+![Cancelamento de Consulta](./documentos/08_delete_consulta.png)
 
 ---
 ---

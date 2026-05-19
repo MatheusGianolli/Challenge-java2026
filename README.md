@@ -48,7 +48,7 @@ A documentação interativa gerada automaticamente pelo Swagger contendo todos o
 ## 🧪 Testes de Requisição (Postman)
 Para a validação das regras de negócio, todos os endpoints foram testados. O arquivo `.json` completo exportado da Collection do Postman encontra-se disponível na pasta `documentos/` deste repositório para importação e avaliação.
 
-## 🧪 Testes da API (Postman Collection)
+
 
 Para facilitar a avaliação e o teste dos endpoints, disponibilizei uma **Postman Collection** completa com todas as requisições (POST, GET, PUT e DELETE) já estruturadas e com  exemplos preenchidos.
 

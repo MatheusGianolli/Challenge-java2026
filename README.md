@@ -84,7 +84,7 @@ Conforme solicitado nos requisitos técnicos, a aplicação utiliza um mapeador 
 
 ### Diagrama Entidade-Relacionamento (DER)
 Abaixo, a modelagem do banco de dados relacional oficial estruturado para o Oracle, garantindo a integridade por meio de PKs e FKs:
-![Diagrama DER](documentos/diagrama_der.png)
+![Diagrama DER]
 
 ### Diagrama de Classes
 Representação da arquitetura orientada a objetos das entidades do sistema mapeadas no Java:

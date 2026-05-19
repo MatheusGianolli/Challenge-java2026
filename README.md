@@ -68,6 +68,10 @@ Para a validação das regras de negócio, todos os endpoints foram testados. O 
 ### 6. Agendamento de Consulta (POST)
 ![Print Cadastro Consulta](./documentos/06_post_consulta.png)
 
+#### 7. Lançamento de Diagnóstico de Consulta (PUT)
+Demonstração da atualização do prontuário médico. A requisição insere o diagnóstico final e o sistema altera automaticamente o status da consulta para `REALIZADA`.
+![Lançamento de Diagnóstico](./documentos/07_put_consulta.png)
+
 ---
 ---
 

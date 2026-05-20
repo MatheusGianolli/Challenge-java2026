@@ -9,6 +9,59 @@ API RESTful desenvolvida em Java com Spring Boot para o gerenciamento de clínic
 * **Enzo Xavier Coelho** — RM: [RM do Enzo]
 * **Gustavo Ribeiro Permagnani** — RM: [RM do Gustavo]
 
+```text
+Estrutura de pastas
+-------------------
+
+challenge-api/
+├── documentos/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── br/com/challenge/
+│   │   │       ├── config/
+│   │   │       │   └── OpenApiConfig.java
+│   │   │       ├── controllers/
+│   │   │       │   ├── ClinicaController.java
+│   │   │       │   ├── ConsultaController.java
+│   │   │       │   ├── PetController.java
+│   │   │       │   ├── TutorController.java
+│   │   │       │   └── VeterinarioController.java
+│   │   │       ├── dtos/
+│   │   │       │   ├── ClinicaDTO.java
+│   │   │       │   ├── ConsultaDTO.java
+│   │   │       │   ├── PetDTO.java
+│   │   │       │   ├── TutorDTO.java
+│   │   │       │   └── VeterinarioDTO.java
+│   │   │       ├── exceptions/
+│   │   │       │   ├── GlobalExceptionHandler.java
+│   │   │       │   └── ResourceNotFoundException.java
+│   │   │       ├── models/
+│   │   │       │   ├── Clinica.java
+│   │   │       │   ├── Consulta.java
+│   │   │       │   ├── Pet.java
+│   │   │       │   ├── Tutor.java
+│   │   │       │   └── Veterinario.java
+│   │   │       ├── repositories/
+│   │   │       │   ├── ClinicaRepository.java
+│   │   │       │   ├── ConsultaRepository.java
+│   │   │       │   ├── PetRepository.java
+│   │   │       │   ├── TutorRepository.java
+│   │   │       │   └── VeterinarioRepository.java
+│   │   │       ├── services/
+│   │   │       │   ├── ClinicaService.java
+│   │   │       │   ├── ConsultaService.java
+│   │   │       │   ├── PetService.java
+│   │   │       │   ├── TutorService.java
+│   │   │       │   └── VeterinarioService.java
+│   │   │       └── ChallengeApplication.java
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/
+├── pom.xml
+└── README.md
+```
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
@@ -43,6 +96,13 @@ A documentação interativa gerada automaticamente pelo Swagger contendo todos o
 **Print do Swagger em funcionamento:**
 ![Print do Swagger](documentos/print_swagger.png)
 
+
+
+Na imagem abaixo, é possível observar a organização clara das rotas da API, separadas por domínios (entidades) e com a sinalização visual de todos os métodos HTTP (GET, POST, PUT e DELETE) implementados nos CRUDs:
+
+![Interface do Swagger UI](./documentos/swagger_api2.png)
+<br>
+![Interface do Swagger UI - Tutores e Consultas](./documentos/swagger_api3.png)
 ---
 
 ## 🧪 Testes de Requisição (Postman)
@@ -87,6 +147,8 @@ Demonstração da atualização das informações de um paciente (Pet). A requis
 #### 10. Exclusão de Pet (DELETE)
 Demonstração da remoção de um Pet do sistema. O endpoint recebe o ID via parâmetro na URL e deleta o registro correspondente do banco de dados.
 ![Exclusão de Pet](./documentos/10_delete_pet.png)
+
+
 
 ---
 ---

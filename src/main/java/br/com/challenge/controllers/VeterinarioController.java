@@ -21,11 +21,14 @@ public class VeterinarioController {
 
     @Autowired private VeterinarioService service;
 
-    @Operation(summary = "Lista todos os veterinários com paginação")
+    @Operation(summary = "Lista todos os veterinários com paginação e filtro opcional por especialidade")
     @GetMapping
     public ResponseEntity<Page<VeterinarioDTO.Response>> listar(
+            @RequestParam(required = false) String especialidade, // <-- ADICIONADO AQUI
             @PageableDefault(size = 10, sort = "nome") Pageable pageable) {
-        Page<Veterinario> vets = service.listarTodos(pageable);
+
+
+        Page<Veterinario> vets = service.listarTodos(pageable, especialidade);
         return ResponseEntity.ok(vets.map(VeterinarioDTO.Response::new));
     }
 

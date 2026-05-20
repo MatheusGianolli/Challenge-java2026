@@ -74,6 +74,8 @@ challenge-api/
 * **Documentação:** Swagger (Springdoc OpenAPI)
 * **Testes:** Postman
 
+>  **Nota de Implementação:** > Optou-se por aplicar esses recursos avançados (Cache e Query Methods) exclusivamente na entidade `Veterinario` como uma "Prova de Conceito" 
+
 ---
 
 

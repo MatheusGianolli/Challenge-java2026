@@ -5,9 +5,11 @@ API RESTful desenvolvida em Java com Spring Boot para o gerenciamento de clínic
 ---
 
 ## 👥 Integrantes do Grupo
-* **Matheus Gianolli** — RM: [Seu RM]
-* **Enzo Xavier Coelho** — RM: [RM do Enzo]
-* **Gustavo Ribeiro Permagnani** — RM: [RM do Gustavo]
+* **Matheus Gianolli** — RM: 565258
+* **Enzo Xavier Coelho** — RM: 563379
+* **Gustavo Ribeiro Permagnani** — RM: 564995
+* **Larissa Juvenal de Magalhaes** — RM: 566457
+* **Julia Menezes** — RM: 565568
 
 ```text
 Estrutura de pastas

@@ -91,8 +91,6 @@ challenge-api/
 	}
 6. A API estará disponível e rodando na porta local: `http://localhost:8080`.
 
-  Documentação da API (Swagger)
-A documentação interativa gerada automaticamente pelo Swagger contendo todos os endpoints, parâmetros e esquemas JSON pode ser acessada com a aplicação rodando no link:
 ##  Documentação da API (Swagger)
 A documentação interativa gerada automaticamente pelo Swagger contendo todos os endpoints, parâmetros e esquemas JSON pode ser acessada com a aplicação rodando no link:
  `http://localhost:8080/swagger-ui/index.html`

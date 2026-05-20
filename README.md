@@ -4,7 +4,7 @@ API RESTful desenvolvida em Java com Spring Boot para o gerenciamento de clínic
 
 ---
 
-## 👥 Integrantes do Grupo
+##  Integrantes do Grupo
 * **Matheus Gianolli** — RM: 565258
 * **Enzo Xavier Coelho** — RM: 563379
 * **Gustavo Ribeiro Permagnani** — RM: 564995
@@ -66,7 +66,7 @@ challenge-api/
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 * **Linguagem:** Java 17
 * **Framework:** Spring Boot 3.2.5
 * **Banco de Dados:** H2 Database (Memória para testes) e Oracle (Oficial)
@@ -78,9 +78,9 @@ challenge-api/
 
 
 
-⚙️ Como Executar o Projeto
+ Como Executar o Projeto
 1. Clone o repositório na sua máquina:
-   ``
+   `https://github.com/MatheusGianolli/Challenge-java2026`
 2. Importe o projeto na sua IDE (recomendado: IntelliJ IDEA).
 3. Aguarde a sincronização das dependências do Maven.
 4. Execute a classe principal `ChallengeApplication.java`.
@@ -89,11 +89,11 @@ challenge-api/
 	}
 6. A API estará disponível e rodando na porta local: `http://localhost:8080`.
 
-📖 Documentação da API (Swagger)
+  Documentação da API (Swagger)
 A documentação interativa gerada automaticamente pelo Swagger contendo todos os endpoints, parâmetros e esquemas JSON pode ser acessada com a aplicação rodando no link:
-## 📖 Documentação da API (Swagger)
+##  Documentação da API (Swagger)
 A documentação interativa gerada automaticamente pelo Swagger contendo todos os endpoints, parâmetros e esquemas JSON pode ser acessada com a aplicação rodando no link:
-👉 `http://localhost:8080/swagger-ui/index.html`
+ `http://localhost:8080/swagger-ui/index.html`
 
 **Print do Swagger em funcionamento:**
 ![Print do Swagger](documentos/print_swagger.png)
@@ -107,7 +107,7 @@ Na imagem abaixo, é possível observar a organização clara das rotas da API, 
 ![Interface do Swagger UI - Tutores e Consultas](./documentos/swagger_api3.png)
 ---
 
-## 🧪 Testes de Requisição (Postman)
+##   Testes de Requisição (Postman)
 Para a validação das regras de negócio, todos os endpoints foram testados. O arquivo `.json` completo exportado da Collection do Postman encontra-se disponível na pasta `documentos/` deste repositório para importação e avaliação.
 
 
@@ -155,7 +155,7 @@ Demonstração da remoção de um Pet do sistema. O endpoint recebe o ID via par
 ---
 ---
 
-## ⚠️ Tratamento de Erros e Exceções (Validação Funcional)
+##  Tratamento de Erros e Exceções (Validação Funcional)
 Conforme solicitado nos requisitos técnicos, a aplicação utiliza um mapeador global de exceções (`@RestControllerAdvice`). Quando um campo obrigatório viola as regras do Bean Validation (ex: enviar um campo obrigatório em branco), a API intercepta a requisição e retorna o Status **400 Bad Request** com os detalhes amigáveis do erro.
 
 **Prova do Tratamento de Exceções de Validação:**
@@ -164,14 +164,14 @@ Conforme solicitado nos requisitos técnicos, a aplicação utiliza um mapeador 
 
 ---
 
-## 🗄️ Modelagem de Dados e Arquitetura
+##  Modelagem de Dados e Arquitetura
 ### Diagrama de Classes
 Representação da arquitetura orientada a objetos das entidades do sistema mapeadas no Java:
 ![Diagrama de Classes](documentos/diagrama_classes.png)
 
 ---
 
-## 📅 Divisão de Tarefas e Cronograma
+##  Divisão de Tarefas e Cronograma
 A gestão ágil do projeto e a divisão técnica das responsabilidades desenvolvidas por cada integrante do grupo durante esta Sprint estão documentadas no arquivo em anexo.
 
 * **Consulte o arquivo:** `cronograma.pdf` (localizado na pasta `documentos/`).

@@ -91,8 +91,6 @@ challenge-api/
 	}
 6. A API estará disponível e rodando na porta local: `http://localhost:8080`.
 
-  Documentação da API (Swagger)
-A documentação interativa gerada automaticamente pelo Swagger contendo todos os endpoints, parâmetros e esquemas JSON pode ser acessada com a aplicação rodando no link:
 ##  Documentação da API (Swagger)
 A documentação interativa gerada automaticamente pelo Swagger contendo todos os endpoints, parâmetros e esquemas JSON pode ser acessada com a aplicação rodando no link:
  `http://localhost:8080/swagger-ui/index.html`
@@ -114,10 +112,7 @@ Para a validação das regras de negócio, todos os endpoints foram testados. O 
 
 
 
-Para facilitar a avaliação e o teste dos endpoints, disponibilizei uma **Postman Collection** completa com todas as requisições (POST, GET, PUT e DELETE) já estruturadas e com  exemplos preenchidos.
 
-O arquivo `.json` da collection encontra-se dentro da pasta `documentos/` neste repositório. 
-**Provas de Funcionamento das Rotas (Prints):**
 
 ### 1. Cadastro de Tutor (POST)
 ![Print Cadastro Tutor](./documentos/01_post_tutor.png)

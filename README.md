@@ -176,4 +176,4 @@ Representação da arquitetura orientada a objetos das entidades do sistema mape
 ##  Divisão de Tarefas e Cronograma
 A gestão ágil do projeto e a divisão técnica das responsabilidades desenvolvidas por cada integrante do grupo durante esta Sprint estão documentadas no arquivo em anexo.
 
-* **Consulte o arquivo:** `cronograma.pdf` (localizado na pasta `documentos/`).
+* **Consulte o arquivo:** `Challenger Clyvo.pdf` (localizado na pasta `documentos/`).

@@ -1,6 +1,7 @@
 package br.com.challenge.dtos;
 
 import br.com.challenge.models.Consulta;
+
 import java.time.LocalDateTime;
 
 public record ConsultaResponseDTO(

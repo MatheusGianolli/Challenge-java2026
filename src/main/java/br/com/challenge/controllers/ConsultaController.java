@@ -1,3 +1,4 @@
+
 package br.com.challenge.controllers;
 
 import br.com.challenge.dtos.ConsultaRequestDTO;
@@ -16,50 +17,98 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/consultas")
-@Tag(name = "Consultas", description = "Endpoints de gerenciamento de consultas veterinárias")
+@Tag(
+        name = "Consultas",
+        description = "Endpoints de gerenciamento de consultas veterinárias"
+)
 public class ConsultaController {
 
     @Autowired
     private ConsultaService service;
 
-    @Operation(summary = "Lista todas as consultas com paginação e ordenação")
+    @Operation(
+            summary = "Lista todas as consultas com paginação e ordenação"
+    )
     @GetMapping
     public ResponseEntity<Page<ConsultaResponseDTO>> listar(
-            @PageableDefault(size = 10, sort = "dataPrevista", direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(
+                    size = 10,
+                    sort = "dataPrevista",
+                    direction = Sort.Direction.ASC
+            ) Pageable pageable
+    ) {
         Page<Consulta> consultas = service.listarTodas(pageable);
-        return ResponseEntity.ok(consultas.map(ConsultaResponseDTO::new)); // Converte Entidade para DTO
+
+        return ResponseEntity.ok(
+                consultas.map(ConsultaResponseDTO::new)
+        );
     }
 
-    @Operation(summary = "Busca uma consulta pelo ID")
+    @Operation(
+            summary = "Busca uma consulta pelo ID"
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<ConsultaResponseDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ConsultaResponseDTO> buscarPorId(
+            @PathVariable Long id
+    ) {
         Consulta consulta = service.buscarPorId(id);
-        return ResponseEntity.ok(new ConsultaResponseDTO(consulta));
+
+        return ResponseEntity.ok(
+                new ConsultaResponseDTO(consulta)
+        );
     }
 
-    @Operation(summary = "Cadastra (Agenda) uma nova consulta")
+    @Operation(
+            summary = "Agenda uma nova consulta"
+    )
     @PostMapping
-    public ResponseEntity<ConsultaResponseDTO> agendar(@RequestBody @Valid ConsultaRequestDTO dto) {
+    public ResponseEntity<ConsultaResponseDTO> agendar(
+            @RequestBody @Valid ConsultaRequestDTO dto
+    ) {
         Consulta novaConsulta = service.agendar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ConsultaResponseDTO(novaConsulta));
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ConsultaResponseDTO(novaConsulta));
     }
 
-    @Operation(summary = "Cancela uma consulta alterando seu status")
+    @Operation(
+            summary = "Cancela uma consulta sem apagar o registro"
+    )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancelar(@PathVariable Long id) {
+    public ResponseEntity<Void> cancelar(
+            @PathVariable Long id
+    ) {
         service.cancelar(id);
+
         return ResponseEntity.noContent().build();
     }
-    @Operation(summary = "Atualiza o diagnóstico e finaliza a consulta")
-    @PutMapping("/{id}")
+
+    @Operation(
+            summary = "Atualiza o diagnóstico e finaliza a consulta"
+    )
+    @PutMapping("/{id}/diagnostico")
     public ResponseEntity<ConsultaResponseDTO> atualizarDiagnostico(
             @PathVariable Long id,
-            @RequestParam String diagnostico) {
 
-        // Chama o método do service passando null para a data de retorno só para simplificar
-        Consulta consultaAtualizada = service.atualizarDiagnostico(id, diagnostico, null);
-        return ResponseEntity.ok(new ConsultaResponseDTO(consultaAtualizada));
+            @RequestParam String diagnostico,
+
+            @RequestParam(required = false)
+            LocalDateTime retorno
+    ) {
+        Consulta consultaAtualizada =
+                service.atualizarDiagnostico(
+                        id,
+                        diagnostico,
+                        retorno
+                );
+
+        return ResponseEntity.ok(
+                new ConsultaResponseDTO(consultaAtualizada)
+        );
     }
 }

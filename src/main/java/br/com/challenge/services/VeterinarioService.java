@@ -5,8 +5,8 @@ import br.com.challenge.exceptions.ResourceNotFoundException;
 import br.com.challenge.models.Veterinario;
 import br.com.challenge.repositories.VeterinarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict; // IMPORT DO CACHE
-import org.springframework.cache.annotation.Cacheable; // IMPORT DO CACHE
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,26 +16,43 @@ import java.time.LocalDateTime;
 @Service
 public class VeterinarioService {
 
-    @Autowired private VeterinarioRepository repository;
+    @Autowired
+    private VeterinarioRepository repository;
 
     @Cacheable(value = "veterinarios")
     public Page<Veterinario> listarTodos(Pageable pageable, String especialidade) {
-        // SE PASSAR A ESPECIALIDADE, ELE FILTRA
+
+        // Se informar uma especialidade, lista somente veterinários ativos
+        // que correspondem ao filtro.
         if (especialidade != null && !especialidade.trim().isEmpty()) {
-            return repository.findByEspecialidadeContainingIgnoreCase(especialidade, pageable);
+            return repository.findByStatusAndEspecialidadeContainingIgnoreCase(
+                    "ATIVO",
+                    especialidade,
+                    pageable
+            );
         }
-        // SE NÃO, TRAZ TUDO NORMALMENTE
-        return repository.findAll(pageable);
+
+        // Caso não informe especialidade, lista somente veterinários ativos.
+        return repository.findByStatus(
+                "ATIVO",
+                pageable
+        );
     }
 
     public Veterinario buscarPorId(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Veterinário não encontrado com o ID: " + id));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Veterinário não encontrado com o ID: " + id
+                        )
+                );
     }
 
     @CacheEvict(value = "veterinarios", allEntries = true)
     public Veterinario cadastrar(VeterinarioDTO.Request dto) {
+
         Veterinario vet = new Veterinario();
+
         vet.setNome(dto.nome());
         vet.setCrmv(dto.crmv());
         vet.setEspecialidade(dto.especialidade());
@@ -43,14 +60,18 @@ public class VeterinarioService {
         vet.setEmail(dto.email());
         vet.setTelefone(dto.telefone());
 
-        vet.setStatus("ATIVO"); // Cadastra como ativo por padrão
-        vet.setDataUltimoAcesso(LocalDateTime.now()); // Marca o momento da criação
+        // Todo veterinário começa ativo.
+        vet.setStatus("ATIVO");
+
+        // Registra o momento do cadastro.
+        vet.setDataUltimoAcesso(LocalDateTime.now());
 
         return repository.save(vet);
     }
 
-    @CacheEvict(value = "veterinarios", allEntries = true) // LIMPA O CACHE SE ATUALIZAR ALGUÉM
+    @CacheEvict(value = "veterinarios", allEntries = true)
     public Veterinario atualizar(Long id, VeterinarioDTO.Request dto) {
+
         Veterinario vet = buscarPorId(id);
 
         vet.setNome(dto.nome());
@@ -65,7 +86,13 @@ public class VeterinarioService {
 
     @CacheEvict(value = "veterinarios", allEntries = true)
     public void excluir(Long id) {
+
         Veterinario vet = buscarPorId(id);
-        repository.delete(vet);
+
+        // Exclusão lógica: mantém o registro no banco
+        // e apenas altera seu status para INATIVO.
+        vet.setStatus("INATIVO");
+
+        repository.save(vet);
     }
 }

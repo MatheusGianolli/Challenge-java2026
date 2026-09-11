@@ -9,6 +9,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClinicaRepository extends JpaRepository<Clinica, Long> {
 
-    // REQUISITO DA SPRINT: Busca com parâmetros
-    Page<Clinica> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
+    Page<Clinica> findByStatus(
+            String status,
+            Pageable pageable
+    );
+
+    Page<Clinica> findByStatusAndNomeContainingIgnoreCase(
+            String status,
+            String nome,
+            Pageable pageable
+    );
+
+    Page<Clinica> findByStatusAndCidadeContainingIgnoreCase(
+            String status,
+            String cidade,
+            Pageable pageable
+    );
 }

@@ -4,58 +4,67 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_consultas")
 @Getter
-@Setter// novamente usando o lombok para deixar o codigo mais limpo e menos volumoso onde ele é respomsavel pelos getters and setters
+@Setter
 public class Consulta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Chaves Estrangeiras (FK)
+    // Tutor responsável pela consulta
     @ManyToOne
     @JoinColumn(name = "responsavel_id", nullable = false)
     private Tutor responsavel;
 
+    // Pet que será atendido
     @ManyToOne
     @JoinColumn(name = "pet_id", nullable = false)
     private Pet pet;
 
+    // Clínica onde ocorrerá o atendimento
     @ManyToOne
     @JoinColumn(name = "clinica_id", nullable = false)
     private Clinica clinica;
 
+    // Veterinário responsável pelo atendimento
     @ManyToOne
     @JoinColumn(name = "veterinario_id", nullable = false)
     private Veterinario veterinario;
 
-    // Campos de Data
-    @CreationTimestamp // Gera a data automaticamente no banco
-    @Column(updatable = false)
+    // Data em que o registro da consulta foi criado
+    @CreationTimestamp
+    @Column(name = "data_criacao", updatable = false)
     private LocalDateTime dataCriacao;
 
-    @Column(nullable = false)
+    // Data e horário agendados
+    @Column(name = "data_prevista", nullable = false)
     private LocalDateTime dataPrevista;
 
+    // Data prevista para retorno, quando aplicável
+    @Column(name = "retorno_previsto")
     private LocalDateTime retornoPrevisto;
 
-    // Detalhes da Consulta
-    private String tipoConsulta; // Ex: Rotina, Emergência, Cirurgia
+    // Tipo: ROTINA, EMERGENCIA, CIRURGIA etc.
+    @Column(name = "tipo_consulta")
+    private String tipoConsulta;
 
-    @Column(length = 1000)
+    @Column(name = "descricao_sintomas", length = 1000)
     private String descricaoSintomas;
 
     @Column(length = 1000)
     private String diagnostico;
 
-    private String status; // Ex: AGENDADA, REALIZADA, CANCELADA
+    // AGENDADA, REALIZADA ou CANCELADA
+    @Column(name = "status")
+    private String status;
 
-    // Construtor vazio exigido pelo JPA
-    public Consulta() {}
-
-
+    // Construtor exigido pelo JPA
+    public Consulta() {
+    }
 }

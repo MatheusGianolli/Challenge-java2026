@@ -37,7 +37,12 @@ public class Clinica {
 
     private String tipoEstabelecimento; // clínica veterinária, hospital, etc.
     private String especialidadePrincipal;
+
+    @Column(name = "atendimento_24h")
     private String atendimento24h; // S ou N
+    // 
+    
+    @Column(name = "atende_emergencia")
     private String atendeEmergencia; // S ou N
 
     public Clinica() {}

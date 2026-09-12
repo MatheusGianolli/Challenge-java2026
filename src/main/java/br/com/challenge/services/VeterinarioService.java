@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -94,10 +95,11 @@ public class VeterinarioService {
         return repository.save(vet);
     }
 
+    @Transactional
     @CacheEvict(value = "veterinarios", allEntries = true)
     public void excluir(Long id) {
         Veterinario vet = buscarPorId(id);
-        vet.setStatus("INATIVO");
-        repository.save(vet);
+
+        repository.delete(vet);
     }
 }

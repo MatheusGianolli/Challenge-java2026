@@ -14,16 +14,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/clinicas")
-@Tag(name = "Clínicas", description = "Endpoints para gerenciamento de clínicas")
+@Tag(
+        name = "Clínicas",
+        description = "Endpoints para gerenciamento de clínicas"
+)
 public class ClinicaController {
 
     @Autowired
     private ClinicaService service;
 
-    // Lista clínicas ativas com paginação.
-    @Operation(summary = "Lista todas as clínicas ativas com paginação")
+    // Lista clínicas ativas e inativas com paginação.
+    @Operation(summary = "Lista todas as clínicas com paginação")
     @GetMapping
     public ResponseEntity<Page<ClinicaDTO.Response>> listar(
             @PageableDefault(size = 10, sort = "nome") Pageable pageable) {
@@ -35,8 +40,8 @@ public class ClinicaController {
         );
     }
 
-    // Busca clínicas ativas pelo nome.
-    @Operation(summary = "Busca clínicas ativas pelo nome")
+    // Busca clínicas pelo nome.
+    @Operation(summary = "Busca clínicas pelo nome")
     @GetMapping("/buscar")
     public ResponseEntity<Page<ClinicaDTO.Response>> buscarPorNome(
             @RequestParam String nome,
@@ -49,8 +54,8 @@ public class ClinicaController {
         );
     }
 
-    // Busca clínicas ativas pela cidade.
-    @Operation(summary = "Busca clínicas ativas pela cidade")
+    // Busca clínicas pela cidade.
+    @Operation(summary = "Busca clínicas pela cidade")
     @GetMapping("/buscar/cidade")
     public ResponseEntity<Page<ClinicaDTO.Response>> buscarPorCidade(
             @RequestParam String cidade,
@@ -103,13 +108,29 @@ public class ClinicaController {
         );
     }
 
-    // Exclusão lógica.
-    @Operation(summary = "Desativa uma clínica")
+    // Altera o status da clínica para ATIVO ou INATIVO.
+    @Operation(summary = "Altera o status de uma clínica")
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ClinicaDTO.Response> alterarStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+
+        String status = body.get("status");
+
+        Clinica clinicaAtualizada = service.alterarStatus(id, status);
+
+        return ResponseEntity.ok(
+                new ClinicaDTO.Response(clinicaAtualizada)
+        );
+    }
+
+    // Exclui uma clínica permanentemente.
+    @Operation(summary = "Exclui uma clínica permanentemente")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(
             @PathVariable Long id) {
 
-        service.excluir(id);
+        service.excluirPermanentemente(id);
 
         return ResponseEntity.noContent().build();
     }

@@ -17,24 +17,25 @@ public class ClinicaService {
     @Autowired
     private ClinicaRepository repository;
 
+    // Lista clínicas ativas e inativas.
     @Cacheable(value = "clinicas")
     public Page<Clinica> listarTodas(Pageable pageable) {
-        return repository.findByStatus("ATIVO", pageable);
+        return repository.findAll(pageable);
     }
 
+    // Busca clínicas ativas e inativas pelo nome.
     @Cacheable(value = "clinicas")
     public Page<Clinica> buscarPorNome(String nome, Pageable pageable) {
-        return repository.findByStatusAndNomeContainingIgnoreCase(
-                "ATIVO",
+        return repository.findByNomeContainingIgnoreCase(
                 nome,
                 pageable
         );
     }
 
+    // Busca clínicas ativas e inativas pela cidade.
     @Cacheable(value = "clinicas")
     public Page<Clinica> buscarPorCidade(String cidade, Pageable pageable) {
-        return repository.findByStatusAndCidadeContainingIgnoreCase(
-                "ATIVO",
+        return repository.findByCidadeContainingIgnoreCase(
                 cidade,
                 pageable
         );
@@ -98,14 +99,50 @@ public class ClinicaService {
         return repository.save(clinica);
     }
 
+    // Altera o status sem excluir a clínica.
+    @CacheEvict(value = "clinicas", allEntries = true)
+    public Clinica alterarStatus(Long id, String status) {
+
+        Clinica clinica = buscarPorId(id);
+
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException(
+                    "O status da clínica deve ser informado."
+            );
+        }
+
+        String novoStatus = status.trim().toUpperCase();
+
+        if (!novoStatus.equals("ATIVO")
+                && !novoStatus.equals("INATIVO")) {
+
+            throw new IllegalArgumentException(
+                    "Status inválido. Utilize ATIVO ou INATIVO."
+            );
+        }
+
+        clinica.setStatus(novoStatus);
+
+        return repository.save(clinica);
+    }
+
+    // Desativação lógica mantida para compatibilidade.
     @CacheEvict(value = "clinicas", allEntries = true)
     public void excluir(Long id) {
 
         Clinica clinica = buscarPorId(id);
 
-        // Exclusão lógica: mantém o registro no banco.
         clinica.setStatus("INATIVO");
 
         repository.save(clinica);
+    }
+
+    // Exclusão física: remove definitivamente a clínica do banco.
+    @CacheEvict(value = "clinicas", allEntries = true)
+    public void excluirPermanentemente(Long id) {
+
+        Clinica clinica = buscarPorId(id);
+
+        repository.delete(clinica);
     }
 }

@@ -20,23 +20,18 @@ public class VeterinarioService {
     private VeterinarioRepository repository;
 
     @Cacheable(value = "veterinarios")
-    public Page<Veterinario> listarTodos(Pageable pageable, String especialidade) {
-
-        // Se informar uma especialidade, lista somente veterinários ativos
-        // que correspondem ao filtro.
+    public Page<Veterinario> listarTodos(
+            Pageable pageable,
+            String especialidade
+    ) {
         if (especialidade != null && !especialidade.trim().isEmpty()) {
-            return repository.findByStatusAndEspecialidadeContainingIgnoreCase(
-                    "ATIVO",
+            return repository.findByEspecialidadeContainingIgnoreCase(
                     especialidade,
                     pageable
             );
         }
 
-        // Caso não informe especialidade, lista somente veterinários ativos.
-        return repository.findByStatus(
-                "ATIVO",
-                pageable
-        );
+        return repository.findAll(pageable);
     }
 
     public Veterinario buscarPorId(Long id) {
@@ -50,7 +45,6 @@ public class VeterinarioService {
 
     @CacheEvict(value = "veterinarios", allEntries = true)
     public Veterinario cadastrar(VeterinarioDTO.Request dto) {
-
         Veterinario vet = new Veterinario();
 
         vet.setNome(dto.nome());
@@ -59,19 +53,17 @@ public class VeterinarioService {
         vet.setTipoAtuacao(dto.tipoAtuacao());
         vet.setEmail(dto.email());
         vet.setTelefone(dto.telefone());
-
-        // Todo veterinário começa ativo.
         vet.setStatus("ATIVO");
-
-        // Registra o momento do cadastro.
         vet.setDataUltimoAcesso(LocalDateTime.now());
 
         return repository.save(vet);
     }
 
     @CacheEvict(value = "veterinarios", allEntries = true)
-    public Veterinario atualizar(Long id, VeterinarioDTO.Request dto) {
-
+    public Veterinario atualizar(
+            Long id,
+            VeterinarioDTO.Request dto
+    ) {
         Veterinario vet = buscarPorId(id);
 
         vet.setNome(dto.nome());
@@ -85,14 +77,27 @@ public class VeterinarioService {
     }
 
     @CacheEvict(value = "veterinarios", allEntries = true)
-    public void excluir(Long id) {
-
+    public Veterinario alterarStatus(Long id, String status) {
         Veterinario vet = buscarPorId(id);
 
-        // Exclusão lógica: mantém o registro no banco
-        // e apenas altera seu status para INATIVO.
-        vet.setStatus("INATIVO");
+        String novoStatus = status.trim().toUpperCase();
 
+        if (!novoStatus.equals("ATIVO")
+                && !novoStatus.equals("INATIVO")) {
+            throw new IllegalArgumentException(
+                    "Status inválido. Utilize ATIVO ou INATIVO."
+            );
+        }
+
+        vet.setStatus(novoStatus);
+
+        return repository.save(vet);
+    }
+
+    @CacheEvict(value = "veterinarios", allEntries = true)
+    public void excluir(Long id) {
+        Veterinario vet = buscarPorId(id);
+        vet.setStatus("INATIVO");
         repository.save(vet);
     }
 }

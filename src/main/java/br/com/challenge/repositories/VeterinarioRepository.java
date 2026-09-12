@@ -19,4 +19,9 @@ public interface VeterinarioRepository extends JpaRepository<Veterinario, Long> 
             String status,
             Pageable pageable
     );
+
+    Page<Veterinario> findByEspecialidadeContainingIgnoreCase(
+            String especialidade,
+            Pageable pageable
+    );
 }

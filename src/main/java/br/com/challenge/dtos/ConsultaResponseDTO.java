@@ -22,17 +22,33 @@ public record ConsultaResponseDTO(
     public ConsultaResponseDTO(Consulta c) {
         this(
                 c.getId(),
-                c.getResponsavel() != null ? c.getResponsavel().getNome() : null,
-                c.getPet() != null ? c.getPet().getNome() : null,
-                c.getClinica() != null ? c.getClinica().getNome() : null,
-                c.getVeterinario() != null ? c.getVeterinario().getNome() : null,
+
+                c.getResponsavel() != null
+                        ? c.getResponsavel().getNome()
+                        : null,
+
+                c.getPet() != null
+                        ? c.getPet().getNome()
+                        : null,
+
+                c.getClinica() != null
+                        ? c.getClinica().getNome()
+                        : null,
+
+                c.getVeterinario() != null
+                        ? c.getVeterinario().getNome()
+                        : null,
+
                 c.getDataCriacao(),
                 c.getDataPrevista(),
                 c.getRetornoPrevisto(),
                 c.getTipoConsulta(),
                 c.getDescricaoSintomas(),
                 c.getDiagnostico(),
-                c.getStatus()
+
+                c.getStatus() != null
+                        ? c.getStatus().toString()
+                        : null
         );
     }
 }

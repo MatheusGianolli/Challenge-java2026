@@ -69,6 +69,19 @@ public class VeterinarioController {
         );
     }
 
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<VeterinarioDTO.Response> alterarStatus(
+            @PathVariable Long id,
+            @RequestParam String status
+    ) {
+
+        Veterinario veterinario = service.alterarStatus(id, status);
+
+        return ResponseEntity.ok(
+                new VeterinarioDTO.Response(veterinario)
+        );
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(
             @PathVariable Long id

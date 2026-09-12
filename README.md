@@ -365,57 +365,13 @@ http://localhost:8080/swagger-ui/index.html
 
 ## 💻 Interface Web
 
-O projeto também possui uma interface web desenvolvida em React, responsável por consumir os endpoints da API.
+## Interface web complementar
 
-A interface disponibiliza telas para:
+Além da API desenvolvida em Java com Spring Boot, o projeto possui uma interface web desenvolvida em React e Vite para facilitar a visualização e utilização dos recursos disponibilizados pela API.
 
-- Dashboard.
-- Tutores.
-- Pets.
-- Clínicas.
-- Consultas.
-- Veterinários.
+A interface permite acessar as principais funcionalidades do sistema, realizando operações integradas ao backend por meio de requisições HTTP.
 
-O acesso às funcionalidades é adaptado conforme o perfil autenticado.
-
-### Regras da interface
-
-- O perfil administrador pode visualizar e gerenciar veterinários.
-- O perfil veterinário não possui acesso à tela de gerenciamento de veterinários.
-- As demais funcionalidades são exibidas conforme as permissões disponíveis na API.
-- As operações são realizadas por meio de requisições HTTP para o backend.
-
-### Executar o frontend
-
-Acesse a pasta do frontend:
-
-```bash
-cd petcare-web
-```
-
-Instale as dependências:
-
-```bash
-npm install
-```
-
-Execute o projeto:
-
-```bash
-npm run dev
-```
-
-Por padrão, o Vite disponibiliza a aplicação em um endereço semelhante a:
-
-```
-http://localhost:5173
-```
-
-A URL da API deve ser configurada no arquivo `.env`:
-
-```
-VITE_API_URL=http://localhost:8080
-```
+A demonstração da interface e de sua integração com a API está disponível no vídeo de apresentação.
 
 ## 🧪 Testes de Requisição
 

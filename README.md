@@ -25,7 +25,7 @@ O PetCare API tem como objetivo centralizar o gerenciamento das informações de
 - Consultas e atendimentos.
 - Diagnósticos e status de consultas.
 
-A aplicação segue o padrão REST, disponibilizando endpoints HTTP para operações de cadastro, consulta, atualização, paginação e exclusão lógica de registros.
+A aplicação segue o padrão REST, disponibilizando endpoints HTTP para operações de cadastro, consulta, atualização, paginação, alteração de status e exclusão de registros conforme as regras de negócio e os relacionamentos definidos no banco de dados.
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -42,9 +42,11 @@ A aplicação segue o padrão REST, disponibilizando endpoints HTTP para operaç
 - SpringDoc OpenAPI / Swagger
 - Maven
 
-### Frontend
+### Interface demonstrativa
 
-A interface web foi desenvolvida separadamente para consumir a API:
+Durante o desenvolvimento, foi criada uma interface web para demonstrar visualmente o consumo da API e o funcionamento das principais funcionalidades do sistema.
+
+A interface foi desenvolvida utilizando:
 
 - React
 - Vite
@@ -52,6 +54,8 @@ A interface web foi desenvolvida separadamente para consumir a API:
 - HTML5
 - CSS
 - Fetch API
+
+> A interface web foi utilizada para demonstração em vídeo e não faz parte dos arquivos disponibilizados neste repositório.
 
 ### Testes e documentação
 
@@ -64,7 +68,7 @@ A interface web foi desenvolvida separadamente para consumir a API:
 
 O backend utiliza uma arquitetura organizada em camadas, separando as responsabilidades da aplicação.
 
-```
+```text
 challenge-api/
 ├── documentos/
 │   ├── Challenger_Clyvo.pdf
@@ -169,8 +173,11 @@ As credenciais são mantidas em memória para fins acadêmicos e de demonstraç�
 - Consulta de clínica por ID.
 - Listagem paginada.
 - Busca de clínica por nome.
+- Busca de clínica por cidade.
 - Atualização de dados.
-- Exclusão lógica.
+- Ativação e desativação de clínicas.
+- Exclusão permanente quando não existem registros vinculados.
+- Preservação de clínicas relacionadas a consultas, respeitando a integridade referencial do banco de dados.
 
 ### Veterinários
 
@@ -197,7 +204,7 @@ As credenciais são mantidas em memória para fins acadêmicos e de demonstraç�
 
 A API é executada, por padrão, na porta 8080.
 
-```
+```text
 http://localhost:8080
 ```
 
@@ -205,53 +212,57 @@ http://localhost:8080
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| GET | /api/tutores | Lista tutores com paginação |
-| GET | /api/tutores/{id} | Busca tutor por ID |
-| POST | /api/tutores | Cadastra um tutor |
-| PUT | /api/tutores/{id} | Atualiza um tutor |
-| DELETE | /api/tutores/{id} | Realiza a exclusão lógica |
+| GET | `/api/tutores` | Lista tutores com paginação |
+| GET | `/api/tutores/{id}` | Busca tutor por ID |
+| POST | `/api/tutores` | Cadastra um tutor |
+| PUT | `/api/tutores/{id}` | Atualiza um tutor |
+| DELETE | `/api/tutores/{id}` | Realiza a exclusão lógica |
 
 ### Pets
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| GET | /api/pets | Lista pets com paginação |
-| GET | /api/pets/{id} | Busca pet por ID |
-| POST | /api/pets | Cadastra um pet |
-| PUT | /api/pets/{id} | Atualiza um pet |
-| DELETE | /api/pets/{id} | Exclui um pet |
+| GET | `/api/pets` | Lista pets com paginação |
+| GET | `/api/pets/{id}` | Busca pet por ID |
+| POST | `/api/pets` | Cadastra um pet |
+| PUT | `/api/pets/{id}` | Atualiza um pet |
+| DELETE | `/api/pets/{id}` | Exclui um pet |
 
 ### Clínicas
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| GET | /api/clinicas | Lista clínicas com paginação |
-| GET | /api/clinicas/{id} | Busca clínica por ID |
-| GET | /api/clinicas/buscar | Busca clínica por nome |
-| POST | /api/clinicas | Cadastra uma clínica |
-| PUT | /api/clinicas/{id} | Atualiza uma clínica |
-| DELETE | /api/clinicas/{id} | Realiza a exclusão lógica |
+| GET | `/api/clinicas` | Lista clínicas com paginação |
+| GET | `/api/clinicas/{id}` | Busca clínica por ID |
+| GET | `/api/clinicas/buscar` | Busca clínica por nome |
+| GET | `/api/clinicas/buscar/cidade` | Busca clínica por cidade |
+| POST | `/api/clinicas` | Cadastra uma clínica |
+| PUT | `/api/clinicas/{id}` | Atualiza uma clínica |
+| PATCH | `/api/clinicas/{id}/status` | Altera o status da clínica |
+| DELETE | `/api/clinicas/{id}` | Exclui permanentemente uma clínica, quando permitido |
+
+> A exclusão permanente pode ser impedida quando a clínica possui consultas ou outros registros vinculados. Nesses casos, a clínica deve ser desativada para preservar o histórico dos atendimentos.
 
 ### Veterinários
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| GET | /api/veterinarios | Lista veterinários com paginação |
-| GET | /api/veterinarios/{id} | Busca veterinário por ID |
-| POST | /api/veterinarios | Cadastra um veterinário |
-| PUT | /api/veterinarios/{id} | Atualiza um veterinário |
-| PATCH | /api/veterinarios/{id}/status | Altera o status do veterinário |
-| DELETE | /api/veterinarios/{id} | Realiza a exclusão lógica |
+| GET | `/api/veterinarios` | Lista veterinários com paginação |
+| GET | `/api/veterinarios/{id}` | Busca veterinário por ID |
+| POST | `/api/veterinarios` | Cadastra um veterinário |
+| PUT | `/api/veterinarios/{id}` | Atualiza um veterinário |
+| PATCH | `/api/veterinarios/{id}/status` | Altera o status do veterinário |
+| DELETE | `/api/veterinarios/{id}` | Realiza a exclusão lógica |
 
 Exemplo de alteração de status:
 
-```
+```http
 PATCH /api/veterinarios/1/status?status=INATIVO
 ```
 
 Para reativação:
 
-```
+```http
 PATCH /api/veterinarios/1/status?status=ATIVO
 ```
 
@@ -259,11 +270,11 @@ PATCH /api/veterinarios/1/status?status=ATIVO
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| GET | /api/consultas | Lista consultas com paginação |
-| GET | /api/consultas/{id} | Busca consulta por ID |
-| POST | /api/consultas | Agenda uma consulta |
-| PUT | /api/consultas/{id} | Atualiza o diagnóstico |
-| DELETE | /api/consultas/{id} | Cancela uma consulta |
+| GET | `/api/consultas` | Lista consultas com paginação |
+| GET | `/api/consultas/{id}` | Busca consulta por ID |
+| POST | `/api/consultas` | Agenda uma consulta |
+| PUT | `/api/consultas/{id}` | Atualiza o diagnóstico |
+| DELETE | `/api/consultas/{id}` | Cancela uma consulta |
 
 ## 📄 Documentação da API
 
@@ -271,7 +282,7 @@ A documentação interativa é disponibilizada pelo Swagger UI.
 
 Com a aplicação em execução, acesse:
 
-```
+```text
 http://localhost:8080/swagger-ui/index.html
 ```
 
@@ -311,7 +322,7 @@ cd Challenge-java2026
 
 Configure as informações de conexão com o Oracle no arquivo:
 
-```
+```text
 src/main/resources/application.properties
 ```
 
@@ -347,31 +358,38 @@ mvn spring-boot:run
 
 Também é possível executar a classe principal pela IDE:
 
-```
+```text
 ChallengeApplication.java
 ```
 
 ### 5. Acessar a API
 
-```
+```text
 http://localhost:8080
 ```
 
 Swagger:
 
-```
+```text
 http://localhost:8080/swagger-ui/index.html
 ```
 
-## 💻 Interface Web
+## 🎥 Vídeo de Apresentação
 
-## Interface web complementar
+O vídeo apresenta o funcionamento do projeto PetCare, incluindo:
 
-Além da API desenvolvida em Java com Spring Boot, o projeto possui uma interface web desenvolvida em React e Vite para facilitar a visualização e utilização dos recursos disponibilizados pela API.
+- Estrutura e funcionamento da API.
+- Autenticação e autorização.
+- Gerenciamento de tutores.
+- Gerenciamento de pets.
+- Gerenciamento de clínicas.
+- Gerenciamento de veterinários.
+- Agendamento e gerenciamento de consultas.
+- Demonstração da interface web desenvolvida para consumo da API.
 
-A interface permite acessar as principais funcionalidades do sistema, realizando operações integradas ao backend por meio de requisições HTTP.
+**Link do vídeo:**
 
-A demonstração da interface e de sua integração com a API está disponível no vídeo de apresentação.
+https://youtu.be/pIJJJ_i8TMU
 
 ## 🧪 Testes de Requisição
 
@@ -390,11 +408,13 @@ Foram realizados testes envolvendo:
 - Cancelamento lógico de consultas.
 - Atualização de dados.
 - Exclusão lógica de registros.
+- Exclusão permanente de clínicas sem registros vinculados.
+- Validação do bloqueio de exclusão de clínicas relacionadas a consultas.
 - Validação de autenticação e autorização.
 
 Os arquivos utilizados nos testes podem ser encontrados na pasta:
 
-```
+```text
 documentos/
 ```
 
@@ -409,9 +429,13 @@ Entre as regras aplicadas no projeto, destacam-se:
 - Busca de recursos por ID.
 - Controle de acesso com Spring Security.
 - Exclusão lógica em entidades que precisam preservar histórico.
+- Exclusão física de clínicas somente quando não existem registros dependentes.
+- Preservação do histórico de consultas por meio das restrições de integridade referencial do banco de dados.
 - Alteração automática do status da consulta após o lançamento do diagnóstico.
 - Controle de status dos veterinários.
+- Controle de status das clínicas.
 - Filtros por especialidade na listagem de veterinários.
+- Busca de clínicas por nome e cidade.
 
 ## 🗃️ Persistência e Migrações
 
@@ -421,7 +445,7 @@ O controle de versão do banco é realizado por meio do Flyway, permitindo organ
 
 As migrações ficam localizadas em:
 
-```
+```text
 src/main/resources/db/migration/
 ```
 
@@ -441,29 +465,48 @@ Durante o desenvolvimento, foram aplicados recursos adicionais para aprimorar a 
 - Autorização por perfil.
 - Documentação automática com Swagger.
 - Exclusão lógica.
+- Exclusão física condicionada aos relacionamentos do banco.
+- Controle de status de clínicas.
 - Controle de status de veterinários.
 - Versionamento de banco com Flyway.
+
+## ⚠️ Observações e Limitações
+
+- As credenciais de autenticação são mantidas em memória para fins acadêmicos.
+- A interface web foi desenvolvida para demonstração em vídeo e não está incluída neste repositório.
+- A execução disponibilizada neste repositório corresponde ao backend da aplicação.
+- A exclusão permanente de clínicas depende da existência de registros vinculados.
+- Clínicas relacionadas a consultas não podem ser removidas fisicamente, pois isso violaria as restrições de integridade referencial do banco de dados.
+- Nesses casos, recomenda-se utilizar a desativação da clínica para preservar o histórico dos atendimentos.
+- A desativação de uma clínica não remove seus registros do banco de dados.
 
 ## 📁 Repositório
 
 Repositório oficial:
 
-```
+```text
 https://github.com/MatheusGianolli/Challenge-java2026
 ```
+
+## 📌 Considerações Finais
+
+O projeto demonstra a construção de uma API RESTful utilizando Java e Spring Boot, integrando persistência de dados, regras de negócio, segurança, documentação e testes de requisições.
+
+A solução foi estruturada de forma modular para facilitar a manutenção, a evolução das funcionalidades e a integração com diferentes interfaces consumidoras da API.
 ##  Modelagem de Dados e Arquitetura
 ### Diagrama de Classes
 Representação da arquitetura orientada a objetos das entidades do sistema mapeadas no Java:
 ![Diagrama de Classes](documentos/diagrama_classes.png)
 
 ---
-## 📌 Considerações Finais
-
-O projeto demonstra a construção de uma API RESTful utilizando Java e Spring Boot, integrando persistência de dados, regras de negócio, segurança, documentação e testes de requisições.
-
-A solução foi estruturada de forma modular para facilitar a manutenção, a evolução das funcionalidades e a integração com diferentes interfaces consumidoras da API.
 
 ##  Divisão de Tarefas e Cronograma
 A gestão ágil do projeto e a divisão técnica das responsabilidades desenvolvidas por cada integrante do grupo durante esta Sprint estão documentadas no arquivo em anexo.
 
 * **Consulte o arquivo:** `Challenger Clyvo.pdf` (localizado na pasta `documentos/`).
+
+## 📌 Considerações Finais
+
+O projeto demonstra a construção de uma API RESTful utilizando Java e Spring Boot, integrando persistência de dados, regras de negócio, segurança, documentação e testes de requisições.
+
+A solução foi estruturada de forma modular para facilitar a manutenção, a evolução das funcionalidades e a integração com diferentes interfaces consumidoras da API.

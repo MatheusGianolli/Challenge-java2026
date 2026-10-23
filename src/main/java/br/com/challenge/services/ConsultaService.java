@@ -3,23 +3,18 @@ package br.com.challenge.services;
 import br.com.challenge.dtos.ConsultaRequestDTO;
 import br.com.challenge.exceptions.BusinessRuleException;
 import br.com.challenge.exceptions.ResourceNotFoundException;
-import br.com.challenge.models.Clinica;
 import br.com.challenge.models.Consulta;
-import br.com.challenge.models.Pet;
-import br.com.challenge.models.Tutor;
-import br.com.challenge.models.Veterinario;
-import br.com.challenge.repositories.ClinicaRepository;
 import br.com.challenge.repositories.ConsultaRepository;
-import br.com.challenge.repositories.PetRepository;
-import br.com.challenge.repositories.TutorRepository;
-import br.com.challenge.repositories.VeterinarioRepository;
+import br.com.challenge.repositories.PkgClyvoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class ConsultaService {
@@ -27,17 +22,9 @@ public class ConsultaService {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+    // Chamadas ao package PL/SQL PKG_CLYVO
     @Autowired
-    private TutorRepository tutorRepository;
-
-    @Autowired
-    private PetRepository petRepository;
-
-    @Autowired
-    private ClinicaRepository clinicaRepository;
-
-    @Autowired
-    private VeterinarioRepository veterinarioRepository;
+    private PkgClyvoRepository pkgClyvo;
 
     // 1. LISTAR CONSULTAS COM PAGINAÇÃO
     public Page<Consulta> listarTodas(Pageable pageable) {
@@ -55,78 +42,22 @@ public class ConsultaService {
     }
 
     // 3. AGENDAR CONSULTA
+    // As regras de negócio (veterinário e clínica ativos, pet pertence ao
+    // responsável, data futura, conflito de horário e limite diário de
+    // consultas) são validadas pela procedure pkg_clyvo.agendar_consulta.
+    // A trigger de auditoria registra o INSERT com o usuário logado.
+    @Transactional
     public Consulta agendar(ConsultaRequestDTO dto) {
+        Long id = pkgClyvo.executarComoUsuario(
+                usuarioLogado(),
+                () -> pkgClyvo.agendarConsulta(dto)
+        );
 
-        Tutor responsavel = tutorRepository.findById(dto.responsavelId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Responsável não encontrado com o ID: " + dto.responsavelId()
-                        )
-                );
-
-        Pet pet = petRepository.findById(dto.petId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Pet não encontrado com o ID: " + dto.petId()
-                        )
-                );
-
-        Clinica clinica = clinicaRepository.findById(dto.clinicaId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Clínica não encontrada com o ID: " + dto.clinicaId()
-                        )
-                );
-
-        Veterinario vet = veterinarioRepository.findById(dto.veterinarioId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Veterinário não encontrado com o ID: " + dto.veterinarioId()
-                        )
-                );
-
-        // Regra de negócio: não permitir agendamento com veterinário inativo
-        if (!"ATIVO".equalsIgnoreCase(vet.getStatus())) {
-            throw new BusinessRuleException(
-                    "Não é possível agendar consulta com veterinário inativo."
-            );
-        }
-
-        // Regra de negócio: não permitir agendamento em clínica inativa
-        if (!"ATIVO".equalsIgnoreCase(clinica.getStatus())) {
-            throw new BusinessRuleException(
-                    "Não é possível agendar consulta em clínica inativa."
-            );
-        }
-
-        // Regra de negócio: impedir conflito de horário do veterinário
-        List<Consulta> conflitos =
-                consultaRepository.buscarConflitoDeHorario(
-                        vet.getId(),
-                        dto.dataPrevista()
-                );
-
-        if (!conflitos.isEmpty()) {
-            throw new BusinessRuleException(
-                    "O veterinário já possui uma consulta agendada para este horário."
-            );
-        }
-
-        Consulta consulta = new Consulta();
-
-        consulta.setResponsavel(responsavel);
-        consulta.setPet(pet);
-        consulta.setClinica(clinica);
-        consulta.setVeterinario(vet);
-        consulta.setDataPrevista(dto.dataPrevista());
-        consulta.setTipoConsulta(dto.tipoConsulta());
-        consulta.setDescricaoSintomas(dto.descricaoSintomas());
-        consulta.setStatus("AGENDADA");
-
-        return consultaRepository.save(consulta);
+        return buscarPorId(id);
     }
 
     // 4. REGISTRAR DIAGNÓSTICO E FINALIZAR CONSULTA
+    @Transactional
     public Consulta atualizarDiagnostico(
             Long id,
             String diagnostico,
@@ -150,10 +81,16 @@ public class ConsultaService {
         consulta.setRetornoPrevisto(retorno);
         consulta.setStatus("REALIZADA");
 
-        return consultaRepository.save(consulta);
+        // saveAndFlush: o UPDATE acontece agora, enquanto o usuário
+        // logado está identificado na sessão (para a auditoria)
+        return pkgClyvo.executarComoUsuario(
+                usuarioLogado(),
+                () -> consultaRepository.saveAndFlush(consulta)
+        );
     }
 
     // 5. CANCELAR CONSULTA
+    @Transactional
     public void cancelar(Long id) {
         Consulta consulta = buscarPorId(id);
 
@@ -170,6 +107,20 @@ public class ConsultaService {
         }
 
         consulta.setStatus("CANCELADA");
-        consultaRepository.save(consulta);
+
+        pkgClyvo.executarComoUsuario(
+                usuarioLogado(),
+                () -> consultaRepository.saveAndFlush(consulta)
+        );
+    }
+
+    // 6. VERIFICAR DISPONIBILIDADE DO VETERINÁRIO (função do package)
+    public String verificarDisponibilidade(Long veterinarioId, LocalDateTime data) {
+        return pkgClyvo.validarLimiteAgenda(veterinarioId, data);
+    }
+
+    private String usuarioLogado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null ? auth.getName() : "anonimo";
     }
 }

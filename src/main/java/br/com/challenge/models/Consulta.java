@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -59,6 +60,10 @@ public class Consulta {
 
     @Column(length = 1000)
     private String diagnostico;
+
+    // Valor cobrado pela consulta (R$)
+    @Column(precision = 10, scale = 2)
+    private BigDecimal valor;
 
     // AGENDADA, REALIZADA ou CANCELADA
     @Column(name = "status")

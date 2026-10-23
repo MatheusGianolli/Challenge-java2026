@@ -2,6 +2,7 @@ package br.com.challenge.dtos;
 
 import br.com.challenge.models.Consulta;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record ConsultaResponseDTO(
@@ -16,7 +17,8 @@ public record ConsultaResponseDTO(
         String tipoConsulta,
         String descricaoSintomas,
         String diagnostico,
-        String status
+        String status,
+        BigDecimal valor
 ) {
 
     public ConsultaResponseDTO(Consulta c) {
@@ -48,7 +50,9 @@ public record ConsultaResponseDTO(
 
                 c.getStatus() != null
                         ? c.getStatus().toString()
-                        : null
+                        : null,
+
+                c.getValor()
         );
     }
 }

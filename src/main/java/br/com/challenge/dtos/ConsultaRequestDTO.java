@@ -3,6 +3,8 @@ package br.com.challenge.dtos;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record ConsultaRequestDTO(
@@ -25,5 +27,9 @@ public record ConsultaRequestDTO(
         @NotBlank(message = "O tipo de consulta é obrigatório")
         String tipoConsulta,
 
-        String descricaoSintomas
+        String descricaoSintomas,
+
+        // Opcional: quando não informado, o banco grava 0
+        @PositiveOrZero(message = "O valor não pode ser negativo")
+        BigDecimal valor
 ) {}

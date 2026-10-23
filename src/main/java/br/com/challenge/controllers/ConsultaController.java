@@ -1,4 +1,3 @@
-
 package br.com.challenge.controllers;
 
 import br.com.challenge.dtos.ConsultaRequestDTO;
@@ -13,11 +12,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/consultas")
@@ -63,7 +64,29 @@ public class ConsultaController {
     }
 
     @Operation(
-            summary = "Agenda uma nova consulta"
+            summary = "Verifica as vagas do veterinário em um dia",
+            description = "Chama a função pkg_clyvo.valida_limite_agenda (limite de 8 consultas por dia)"
+    )
+    @GetMapping("/disponibilidade")
+    public ResponseEntity<Map<String, Object>> disponibilidade(
+            @RequestParam Long veterinarioId,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime data
+    ) {
+        String situacao = service.verificarDisponibilidade(veterinarioId, data);
+
+        return ResponseEntity.ok(Map.of(
+                "veterinarioId", veterinarioId,
+                "data", data,
+                "situacao", situacao
+        ));
+    }
+
+    @Operation(
+            summary = "Agenda uma nova consulta",
+            description = "Chama a procedure pkg_clyvo.agendar_consulta, que valida as regras de negócio e grava a auditoria"
     )
     @PostMapping
     public ResponseEntity<ConsultaResponseDTO> agendar(

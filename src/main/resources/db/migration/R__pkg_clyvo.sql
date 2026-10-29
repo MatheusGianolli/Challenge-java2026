@@ -30,6 +30,19 @@ CREATE OR REPLACE PACKAGE pkg_clyvo AS
 
     c_limite_diario CONSTANT PLS_INTEGER := 8;
 
+    -- Linha do relatorio de faturamento (resumo_consultas).
+    -- Declarado na especificacao para poder ser lido com TABLE() no SQL.
+    TYPE t_linha_resumo IS RECORD (
+        ordem          NUMBER,
+        tipo_linha     VARCHAR2(20),
+        veterinario_id NUMBER,
+        veterinario    VARCHAR2(150),
+        tipo_consulta  VARCHAR2(100),
+        quantidade     NUMBER,
+        valor_total    NUMBER(14,2)
+    );
+    TYPE t_tab_resumo IS TABLE OF t_linha_resumo;
+
     -- Quantas vagas o veterinario ainda tem no dia de p_data
     FUNCTION vagas_disponiveis (
         p_veterinario_id IN NUMBER,
@@ -584,36 +597,107 @@ CREATE OR REPLACE PACKAGE BODY pkg_clyvo AS
     -- Relatorio
     -- =================================================================
 
+    -- Faturamento das consultas REALIZADAS por veterinario e tipo.
+    -- Os tres niveis de soma (combinacao, subtotal por veterinario e
+    -- total geral) sao calculados manualmente com controle de quebra,
+    -- sem ROLLUP, CUBE, GROUPING SETS, GROUPING, SUM ou COUNT.
     PROCEDURE resumo_consultas (
         p_data_inicio IN  DATE DEFAULT NULL,
         p_data_fim    IN  DATE DEFAULT NULL,
         p_cursor      OUT SYS_REFCURSOR
     ) IS
+        -- Linhas detalhadas, ordenadas pela hierarquia das categorias
+        CURSOR c_detalhes IS
+            SELECT v.id            AS vet_id,
+                   v.nome          AS vet_nome,
+                   c.tipo_consulta AS tipo,
+                   NVL(c.valor, 0) AS valor
+              FROM tb_consultas c
+              JOIN tb_veterinarios v ON v.id = c.veterinario_id
+             WHERE c.status = 'REALIZADA'
+               AND (p_data_inicio IS NULL OR c.data_prevista >= TRUNC(p_data_inicio))
+               AND (p_data_fim    IS NULL OR c.data_prevista <  TRUNC(p_data_fim) + 1)
+             ORDER BY v.nome, v.id, c.tipo_consulta;
+
+        v_linhas      t_tab_resumo := t_tab_resumo();
+
+        v_vet_id      tb_veterinarios.id%TYPE;
+        v_vet_nome    tb_veterinarios.nome%TYPE;
+        v_tipo        tb_consultas.tipo_consulta%TYPE;
+        v_primeira    BOOLEAN := TRUE;
+
+        -- Acumuladores dos tres niveis
+        v_qtd_combo   NUMBER := 0;
+        v_soma_combo  NUMBER := 0;
+        v_qtd_vet     NUMBER := 0;
+        v_soma_vet    NUMBER := 0;
+        v_qtd_geral   NUMBER := 0;
+        v_soma_geral  NUMBER := 0;
+
+        PROCEDURE adicionar (
+            p_tipo_linha IN VARCHAR2, p_vet_id IN NUMBER, p_vet_nome IN VARCHAR2,
+            p_tipo IN VARCHAR2, p_qtd IN NUMBER, p_soma IN NUMBER
+        ) IS
+        BEGIN
+            v_linhas.EXTEND;
+            v_linhas(v_linhas.LAST).ordem          := v_linhas.LAST;
+            v_linhas(v_linhas.LAST).tipo_linha     := p_tipo_linha;
+            v_linhas(v_linhas.LAST).veterinario_id := p_vet_id;
+            v_linhas(v_linhas.LAST).veterinario    := p_vet_nome;
+            v_linhas(v_linhas.LAST).tipo_consulta  := p_tipo;
+            v_linhas(v_linhas.LAST).quantidade     := p_qtd;
+            v_linhas(v_linhas.LAST).valor_total    := p_soma;
+        END adicionar;
     BEGIN
         IF p_data_inicio IS NOT NULL AND p_data_fim IS NOT NULL
            AND p_data_inicio > p_data_fim THEN
             RAISE_APPLICATION_ERROR(-20011, 'A data inicial e maior que a data final.');
         END IF;
 
+        FOR r IN c_detalhes LOOP
+            IF NOT v_primeira AND r.vet_id <> v_vet_id THEN
+                -- Mudou o veterinario: fecha a combinacao e o subtotal anteriores
+                adicionar('DETALHE',  v_vet_id, v_vet_nome, v_tipo, v_qtd_combo, v_soma_combo);
+                adicionar('SUBTOTAL', v_vet_id, v_vet_nome, NULL,   v_qtd_vet,   v_soma_vet);
+                v_qtd_combo := 0; v_soma_combo := 0;
+                v_qtd_vet   := 0; v_soma_vet   := 0;
+            ELSIF NOT v_primeira AND r.tipo <> v_tipo THEN
+                -- Mesmo veterinario, mudou o tipo: fecha so a combinacao
+                adicionar('DETALHE',  v_vet_id, v_vet_nome, v_tipo, v_qtd_combo, v_soma_combo);
+                v_qtd_combo := 0; v_soma_combo := 0;
+            END IF;
+
+            -- Acumula manualmente os tres niveis
+            v_qtd_combo  := v_qtd_combo  + 1;
+            v_soma_combo := v_soma_combo + r.valor;
+            v_qtd_vet    := v_qtd_vet    + 1;
+            v_soma_vet   := v_soma_vet   + r.valor;
+            v_qtd_geral  := v_qtd_geral  + 1;
+            v_soma_geral := v_soma_geral + r.valor;
+
+            v_vet_id   := r.vet_id;
+            v_vet_nome := r.vet_nome;
+            v_tipo     := r.tipo;
+            v_primeira := FALSE;
+        END LOOP;
+
+        -- Fecha o ultimo grupo pendente e adiciona o total geral
+        IF NOT v_primeira THEN
+            adicionar('DETALHE',  v_vet_id, v_vet_nome, v_tipo, v_qtd_combo, v_soma_combo);
+            adicionar('SUBTOTAL', v_vet_id, v_vet_nome, NULL,   v_qtd_vet,   v_soma_vet);
+            adicionar('TOTAL_GERAL', NULL, NULL, NULL, v_qtd_geral, v_soma_geral);
+        END IF;
+
+        -- Devolve as linhas montadas como cursor (lido pela API Java)
         OPEN p_cursor FOR
-            SELECT CASE
-                       WHEN GROUPING(v.id) = 1            THEN 'TOTAL_GERAL'
-                       WHEN GROUPING(c.tipo_consulta) = 1 THEN 'SUBTOTAL'
-                       ELSE 'DETALHE'
-                   END                    AS tipo_linha,
-                   v.id                   AS veterinario_id,
-                   v.nome                 AS veterinario,
-                   c.tipo_consulta        AS tipo_consulta,
-                   COUNT(*)               AS quantidade,
-                   SUM(c.valor)           AS valor_total
-              FROM tb_consultas c
-              JOIN tb_veterinarios v ON v.id = c.veterinario_id
-             WHERE c.status = 'REALIZADA'
-               AND (p_data_inicio IS NULL OR c.data_prevista >= TRUNC(p_data_inicio))
-               AND (p_data_fim    IS NULL OR c.data_prevista <  TRUNC(p_data_fim) + 1)
-             GROUP BY GROUPING SETS ((v.id, v.nome, c.tipo_consulta), (v.id, v.nome), ())
-             ORDER BY GROUPING(v.id), v.nome, v.id, GROUPING(c.tipo_consulta), c.tipo_consulta;
+            SELECT tipo_linha, veterinario_id, veterinario,
+                   tipo_consulta, quantidade, valor_total
+              FROM TABLE(v_linhas)
+             ORDER BY ordem;
     EXCEPTION
+        WHEN VALUE_ERROR THEN
+            RAISE_APPLICATION_ERROR(-20099,
+                'Erro de conversao numerica no resumo de consultas: ' || SQLERRM);
         WHEN OTHERS THEN
             relancar('resumo_consultas');
     END resumo_consultas;

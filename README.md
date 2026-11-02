@@ -225,6 +225,19 @@ Ao subir, o Flyway cria as tabelas, carrega os dados e compila o package. Depois
 - Interface: `http://localhost:8080`
 - Swagger: `http://localhost:8080/swagger-ui/index.html`
 
+## 🐳 Docker e deploy
+
+A aplicação tem um `Dockerfile` (build com Maven em duas etapas, execução com JRE 17 e usuário sem privilégios). A versão online roda nesse container no **Render**, conectada ao Oracle da FIAP.
+
+```bash
+docker build -t clyvo-petcare .
+docker run -p 8080:8080 -e DB_USERNAME=seu_usuario -e DB_PASSWORD=sua_senha clyvo-petcare
+```
+
+Variáveis de ambiente: `DB_USERNAME`, `DB_PASSWORD` (obrigatórias) e, opcionalmente, `ADMIN_PASSWORD` e `VET_PASSWORD`. A porta é lida de `PORT` (padrão 8080).
+
+Também há um script para o Azure App Service em `deploy/deploy_azure_app_service.sh`.
+
 ## 🧪 Testes
 
 - Endpoints testados pelo Swagger e pelo Postman (coleção em `documentos/`).

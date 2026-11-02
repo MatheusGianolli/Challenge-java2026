@@ -6,7 +6,7 @@ import br.com.challenge.exceptions.ResourceNotFoundException;
 import br.com.challenge.models.Consulta;
 import br.com.challenge.repositories.ConsultaRepository;
 import br.com.challenge.repositories.PkgClyvoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -15,16 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ConsultaService {
 
-    @Autowired
-    private ConsultaRepository consultaRepository;
+    private final ConsultaRepository consultaRepository;
 
     // Chamadas ao package PL/SQL PKG_CLYVO
-    @Autowired
-    private PkgClyvoRepository pkgClyvo;
+    private final PkgClyvoRepository pkgClyvo;
 
     // 1. LISTAR CONSULTAS COM PAGINAÇÃO
     public Page<Consulta> listarTodas(Pageable pageable) {
@@ -117,6 +117,15 @@ public class ConsultaService {
     // 6. VERIFICAR DISPONIBILIDADE DO VETERINÁRIO (função do package)
     public String verificarDisponibilidade(Long veterinarioId, LocalDateTime data) {
         return pkgClyvo.validarLimiteAgenda(veterinarioId, data);
+    }
+
+    // 7. RETORNOS PREVISTOS NOS PRÓXIMOS DIAS (lembretes de cuidado contínuo)
+    public List<Consulta> retornosPrevistos(int dias) {
+        if (dias < 1 || dias > 365) {
+            throw new BusinessRuleException("Informe um período entre 1 e 365 dias.");
+        }
+        LocalDateTime agora = LocalDateTime.now();
+        return consultaRepository.findByRetornoPrevistoBetweenOrderByRetornoPrevistoAsc(agora, agora.plusDays(dias));
     }
 
     private String usuarioLogado() {

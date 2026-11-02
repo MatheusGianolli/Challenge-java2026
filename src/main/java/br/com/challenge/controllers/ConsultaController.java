@@ -7,7 +7,7 @@ import br.com.challenge.services.ConsultaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,10 +27,10 @@ import java.util.Map;
         name = "Consultas",
         description = "Endpoints de gerenciamento de consultas veterinárias"
 )
+@RequiredArgsConstructor
 public class ConsultaController {
 
-    @Autowired
-    private ConsultaService service;
+    private final ConsultaService service;
 
     @Operation(
             summary = "Lista todas as consultas com paginação e ordenação"
@@ -85,6 +86,19 @@ public class ConsultaController {
     }
 
     @Operation(
+            summary = "Retornos previstos nos próximos dias",
+            description = "Lembretes de acompanhamento: consultas com retorno marcado no período (padrão: 30 dias)"
+    )
+    @GetMapping("/retornos")
+    public ResponseEntity<List<ConsultaResponseDTO>> retornos(
+            @RequestParam(defaultValue = "30") int dias
+    ) {
+        return ResponseEntity.ok(
+                service.retornosPrevistos(dias).stream().map(ConsultaResponseDTO::new).toList()
+        );
+    }
+
+    @Operation(
             summary = "Agenda uma nova consulta",
             description = "Chama a procedure pkg_clyvo.agendar_consulta, que valida as regras de negócio e grava a auditoria"
     )
@@ -121,6 +135,7 @@ public class ConsultaController {
             @RequestParam String diagnostico,
 
             @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             LocalDateTime retorno
     ) {
         Consulta consultaAtualizada =

@@ -6,7 +6,7 @@ import br.com.challenge.services.ClinicaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -22,10 +22,10 @@ import java.util.Map;
         name = "Clínicas",
         description = "Endpoints para gerenciamento de clínicas"
 )
+@RequiredArgsConstructor
 public class ClinicaController {
 
-    @Autowired
-    private ClinicaService service;
+    private final ClinicaService service;
 
     // Lista clínicas ativas e inativas com paginação.
     @Operation(summary = "Lista todas as clínicas com paginação")

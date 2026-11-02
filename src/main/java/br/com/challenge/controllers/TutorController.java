@@ -6,7 +6,7 @@ import br.com.challenge.services.TutorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/tutores")
 @Tag(name = "Tutores", description = "Endpoints para gerenciamento de Tutores")
+@RequiredArgsConstructor
 public class TutorController {
 
-    @Autowired private TutorService service;
+    private final TutorService service;
 
     @Operation(summary = "Lista todos os tutores com paginação")
     @GetMapping

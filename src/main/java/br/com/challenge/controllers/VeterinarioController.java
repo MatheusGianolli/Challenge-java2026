@@ -4,7 +4,7 @@ import br.com.challenge.dtos.VeterinarioDTO;
 import br.com.challenge.models.Veterinario;
 import br.com.challenge.services.VeterinarioService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/veterinarios")
+@RequiredArgsConstructor
 public class VeterinarioController {
 
-    @Autowired
-    private VeterinarioService service;
+    private final VeterinarioService service;
 
     @GetMapping
     public ResponseEntity<Page<VeterinarioDTO.Response>> listarTodos(

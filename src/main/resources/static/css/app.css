@@ -1,0 +1,233 @@
+/* ===================== Clyvo PetCare — interface web ===================== */
+:root {
+    --cor-primaria: #0f766e;
+    --cor-primaria-escura: #115e59;
+    --cor-primaria-clara: #ccfbf1;
+    --cor-fundo: #f4f7f6;
+    --cor-superficie: #ffffff;
+    --cor-texto: #1f2937;
+    --cor-suave: #6b7280;
+    --cor-borda: #e5e7eb;
+    --cor-perigo: #b91c1c;
+    --cor-perigo-clara: #fee2e2;
+    --cor-alerta: #b45309;
+    --cor-alerta-clara: #fef3c7;
+    --cor-ok: #15803d;
+    --cor-ok-clara: #dcfce7;
+    --raio: 10px;
+    --sombra: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .04);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    color: var(--cor-texto);
+    background: var(--cor-fundo);
+}
+
+h1, h2, h3 { margin: 0; }
+code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+[hidden] { display: none !important; }
+
+/* ---------- Marca ---------- */
+.marca { display: flex; align-items: center; gap: 8px; font-size: 18px; color: var(--cor-primaria-escura); }
+.marca-grande { font-size: 26px; justify-content: center; }
+.marca-icone { font-size: 1.3em; }
+
+/* ---------- Botões ---------- */
+.btn {
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-superficie);
+    color: var(--cor-texto);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn:hover { border-color: var(--cor-primaria); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primario { background: var(--cor-primaria); border-color: var(--cor-primaria); color: #fff; }
+.btn-primario:hover { background: var(--cor-primaria-escura); }
+.btn-perigo { color: var(--cor-perigo); }
+.btn-perigo:hover { border-color: var(--cor-perigo); background: var(--cor-perigo-clara); }
+.btn-link { border: none; background: none; color: var(--cor-primaria); padding: 4px 6px; }
+.btn-pequeno { padding: 4px 9px; font-size: 13px; }
+.btn-bloco { width: 100%; padding: 11px; }
+
+/* ---------- Login ---------- */
+.login {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #ccfbf1 0%, #f4f7f6 60%);
+}
+.login-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--cor-superficie);
+    padding: 32px 28px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15, 118, 110, .12);
+    display: grid;
+    gap: 14px;
+}
+.login-sub { text-align: center; color: var(--cor-suave); margin: -6px 0 6px; }
+.login-dica { font-size: 12px; color: var(--cor-suave); margin: 0; line-height: 1.6; }
+
+/* ---------- Formulários ---------- */
+label { display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: #374151; }
+input, select, textarea {
+    font: inherit;
+    font-weight: 400;
+    padding: 9px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--cor-texto);
+    width: 100%;
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--cor-primaria-clara); border-color: var(--cor-primaria); }
+textarea { min-height: 70px; resize: vertical; }
+.obrigatorio::after { content: " *"; color: var(--cor-perigo); }
+.grade-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }
+.grade-form .inteiro { grid-column: 1 / -1; }
+.erro { color: var(--cor-perigo); background: var(--cor-perigo-clara); padding: 8px 10px; border-radius: 8px; margin: 0; font-size: 13px; }
+
+/* ---------- Layout da aplicação ---------- */
+.app { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
+.lateral {
+    background: var(--cor-superficie);
+    border-right: 1px solid var(--cor-borda);
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+#menu { display: grid; gap: 2px; }
+#menu a {
+    text-decoration: none;
+    color: var(--cor-texto);
+    padding: 9px 12px;
+    border-radius: 8px;
+}
+#menu a:hover { background: var(--cor-fundo); }
+#menu a.ativo { background: var(--cor-primaria-clara); color: var(--cor-primaria-escura); font-weight: 600; }
+.usuario {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--cor-borda);
+    padding-top: 14px;
+}
+.usuario div { display: grid; }
+.usuario small { color: var(--cor-suave); }
+
+.conteudo { padding: 28px 32px; display: grid; gap: 20px; align-content: start; min-width: 0; }
+.cabecalho { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.cabecalho p { color: var(--cor-suave); margin: 4px 0 0; }
+.acoes { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; }
+
+.cartao {
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    padding: 18px 20px;
+    min-width: 0;
+}
+.cartao h3 { font-size: 15px; margin-bottom: 12px; }
+
+/* ---------- Indicadores do painel ---------- */
+.indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+.indicador { display: grid; gap: 4px; }
+.indicador span { color: var(--cor-suave); font-size: 13px; }
+.indicador strong { font-size: 26px; font-variant-numeric: tabular-nums; }
+.duas-colunas { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+
+/* ---------- Tabelas ---------- */
+.tabela-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--cor-borda); vertical-align: middle; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--cor-suave); font-weight: 600; }
+tbody tr:hover { background: #fafafa; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.acoes-linha { text-align: right; white-space: nowrap; }
+td.acoes-linha .btn { margin-left: 4px; }
+.vazio { text-align: center; color: var(--cor-suave); padding: 28px; }
+tr.linha-subtotal td { background: #f9fafb; font-weight: 600; }
+tr.linha-total td { background: var(--cor-primaria-clara); font-weight: 700; border-bottom: none; }
+
+/* ---------- Etiquetas ---------- */
+.etiqueta { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.etiqueta-ok { background: var(--cor-ok-clara); color: var(--cor-ok); }
+.etiqueta-alerta { background: var(--cor-alerta-clara); color: var(--cor-alerta); }
+.etiqueta-perigo { background: var(--cor-perigo-clara); color: var(--cor-perigo); }
+.etiqueta-neutra { background: #f3f4f6; color: var(--cor-suave); }
+
+/* ---------- Prontuário ---------- */
+.linha-tempo { display: grid; gap: 10px; border-left: 3px solid var(--cor-primaria-clara); padding-left: 14px; }
+.evento { position: relative; display: grid; gap: 3px; font-size: 14px; }
+.evento::before {
+    content: ""; position: absolute; left: -21px; top: 5px;
+    width: 11px; height: 11px; border-radius: 50%; background: var(--cor-primaria);
+}
+.evento-agendada::before { background: var(--cor-alerta); }
+.evento-cancelada::before { background: var(--cor-perigo); }
+.evento-data { display: flex; gap: 8px; align-items: center; color: var(--cor-suave); font-size: 13px; }
+.evento-texto { color: #374151; }
+.alerta-alergia { background: var(--cor-alerta-clara); padding: 8px 10px; border-radius: 8px; }
+
+/* ---------- Busca ---------- */
+.busca { max-width: 280px; }
+
+/* ---------- Modal ---------- */
+.modal {
+    border: none;
+    border-radius: 14px;
+    padding: 0;
+    width: min(680px, calc(100vw - 32px));
+    max-height: calc(100vh - 40px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
+}
+.modal::backdrop { background: rgba(17, 24, 39, .45); }
+.modal form { display: flex; flex-direction: column; max-height: calc(100vh - 40px); }
+.modal-cabecalho, .modal-rodape { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; gap: 8px; }
+.modal-cabecalho { border-bottom: 1px solid var(--cor-borda); }
+.modal-cabecalho h2 { font-size: 18px; }
+.modal-rodape { border-top: 1px solid var(--cor-borda); justify-content: flex-end; }
+.modal-corpo { padding: 18px 20px; overflow-y: auto; display: grid; gap: 14px; }
+.disponibilidade { font-size: 13px; padding: 8px 10px; border-radius: 8px; }
+
+/* ---------- Avisos (toasts) ---------- */
+.avisos { position: fixed; right: 16px; bottom: 16px; display: grid; gap: 8px; z-index: 50; }
+.aviso {
+    background: #111827;
+    color: #fff;
+    padding: 11px 16px;
+    border-radius: 10px;
+    max-width: 380px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+    font-size: 14px;
+}
+.aviso-erro { background: var(--cor-perigo); }
+.aviso-ok { background: var(--cor-ok); }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    .lateral { position: static; height: auto; padding: 14px 16px; gap: 12px; }
+    #menu { grid-auto-flow: column; overflow-x: auto; }
+    #menu a { white-space: nowrap; }
+    .usuario { margin-top: 0; }
+    .conteudo { padding: 20px 16px; }
+    .duas-colunas, .grade-form { grid-template-columns: 1fr; }
+}

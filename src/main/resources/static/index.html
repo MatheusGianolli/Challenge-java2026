@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clyvo PetCare</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- ============================ LOGIN ============================ -->
+<section id="tela-login" class="login">
+    <form id="form-login" class="login-card" autocomplete="on">
+        <div class="marca marca-grande">
+            <span class="marca-icone">🐾</span>
+            <span>Clyvo <strong>PetCare</strong></span>
+        </div>
+        <p class="login-sub">Cuidado contínuo da saúde do seu pet</p>
+
+        <label>Usuário
+            <input id="login-usuario" name="usuario" required autocomplete="username" placeholder="admin">
+        </label>
+        <label>Senha
+            <input id="login-senha" name="senha" type="password" required autocomplete="current-password">
+        </label>
+
+        <button class="btn btn-primario btn-bloco" type="submit">Entrar</button>
+        <p id="login-erro" class="erro" hidden></p>
+
+        <p class="login-dica">
+            Perfis de teste: <code>admin / admin123</code> (acesso total) ·
+            <code>veterinario / vet123</code> (sem exclusões e sem cadastro de veterinários)
+        </p>
+    </form>
+</section>
+
+<!-- ============================ APLICAÇÃO ============================ -->
+<div id="tela-app" class="app" hidden>
+    <aside class="lateral">
+        <div class="marca"><span class="marca-icone">🐾</span><span>Clyvo <strong>PetCare</strong></span></div>
+        <nav id="menu">
+            <a href="#painel" data-rota="painel">📊 Painel</a>
+            <a href="#consultas" data-rota="consultas">📅 Consultas</a>
+            <a href="#tutores" data-rota="tutores">👤 Tutores</a>
+            <a href="#pets" data-rota="pets">🐶 Pets</a>
+            <a href="#clinicas" data-rota="clinicas">🏥 Clínicas</a>
+            <a href="#veterinarios" data-rota="veterinarios">🩺 Veterinários</a>
+            <a href="#relatorios" data-rota="relatorios">📈 Relatórios</a>
+        </nav>
+        <div class="usuario">
+            <div>
+                <strong id="usuario-nome"></strong>
+                <small id="usuario-perfil"></small>
+            </div>
+            <button id="btn-sair" class="btn btn-link">Sair</button>
+        </div>
+    </aside>
+
+    <main id="conteudo" class="conteudo"></main>
+</div>
+
+<!-- ============================ MODAL ============================ -->
+<dialog id="modal" class="modal">
+    <form id="modal-form" method="dialog">
+        <header class="modal-cabecalho">
+            <h2 id="modal-titulo"></h2>
+            <button type="button" class="btn btn-link" data-fechar>✕</button>
+        </header>
+        <div id="modal-corpo" class="modal-corpo"></div>
+        <footer class="modal-rodape">
+            <button type="button" class="btn" data-fechar>Cancelar</button>
+            <button type="submit" class="btn btn-primario" id="modal-salvar">Salvar</button>
+        </footer>
+    </form>
+</dialog>
+
+<div id="avisos" class="avisos" aria-live="polite"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

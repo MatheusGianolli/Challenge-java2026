@@ -1,0 +1,10 @@
+target/
+.idea/
+.vs/
+.git/
+*.iml
+database/
+docs/
+documentos/
+deploy/
+img.png

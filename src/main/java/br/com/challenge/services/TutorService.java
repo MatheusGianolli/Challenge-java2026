@@ -4,7 +4,8 @@ import br.com.challenge.dtos.TutorDTO;
 import br.com.challenge.exceptions.ResourceNotFoundException;
 import br.com.challenge.models.Tutor;
 import br.com.challenge.repositories.TutorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.challenge.util.StatusCadastro;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,15 +13,16 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class TutorService {
 
-    @Autowired private TutorRepository repository;
+    private final TutorRepository repository;
 
     public Page<Tutor> listarTodos(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    //  Buscar um tutor específico pelo ID
+    // Busca um tutor específico pelo ID
     public Tutor buscarPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tutor não encontrado com o ID: " + id));
@@ -28,33 +30,28 @@ public class TutorService {
 
     public Tutor cadastrar(TutorDTO.Request dto) {
         Tutor tutor = new Tutor();
-        tutor.setNome(dto.nome());
-        tutor.setTipoDocumento(dto.tipoDocumento());
-        tutor.setNumeroDocumento(dto.numeroDocumento());
-        tutor.setDataNascimento(dto.dataNascimento());
-        tutor.setEmail(dto.email());
-        tutor.setTelefone(dto.telefone());
-        tutor.setTipoResponsavel(dto.tipoResponsavel());
-        tutor.setPreferenciaContato(dto.preferenciaContato());
-        tutor.setRecebeNotificacao(dto.recebeNotificacao());
-        tutor.setAutorizaMonitoramento(dto.autorizaMonitoramento());
-        tutor.setLogradouro(dto.logradouro());
-        tutor.setNumeroEndereco(dto.numeroEndereco());
-        tutor.setBairro(dto.bairro());
-        tutor.setCidade(dto.cidade());
-        tutor.setEstado(dto.estado());
-        tutor.setCep(dto.cep());
+        preencherDados(tutor, dto);
 
-        tutor.setStatus("ATIVO"); // Cadastra como ativo por padrão
+        tutor.setStatus(StatusCadastro.ATIVO);          // Cadastra como ativo por padrão
         tutor.setDataUltimoAcesso(LocalDateTime.now()); // Marca o momento da criação
 
         return repository.save(tutor);
     }
 
-    //  Atualizar os dados de um tutor existente
+    // Atualiza os dados de um tutor existente
     public Tutor atualizar(Long id, TutorDTO.Request dto) {
-        Tutor tutor = buscarPorId(id); // Usa o método novo para achar o tutor
+        Tutor tutor = buscarPorId(id);
+        preencherDados(tutor, dto);
+        return repository.save(tutor);
+    }
 
+    public void excluir(Long id) {
+        Tutor tutor = buscarPorId(id);
+        repository.delete(tutor);
+    }
+
+    // Copia os dados do DTO para a entidade (usado no cadastro e na atualização)
+    private void preencherDados(Tutor tutor, TutorDTO.Request dto) {
         tutor.setNome(dto.nome());
         tutor.setTipoDocumento(dto.tipoDocumento());
         tutor.setNumeroDocumento(dto.numeroDocumento());
@@ -71,14 +68,5 @@ public class TutorService {
         tutor.setCidade(dto.cidade());
         tutor.setEstado(dto.estado());
         tutor.setCep(dto.cep());
-
-
-        return repository.save(tutor);
-    }
-
-
-    public void excluir(Long id) {
-        Tutor tutor = buscarPorId(id);
-        repository.delete(tutor);
     }
 }

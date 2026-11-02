@@ -37,21 +37,13 @@ public class GlobalExceptionHandler {
     // Trata os erros de Regra de Negócio (ex: choque de horário do veterinário)
     @ExceptionHandler(BusinessRuleException.class)
     public ResponseEntity<Map<String, Object>> handleBusinessRule(BusinessRuleException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.CONFLICT.value());
-        response.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        return erro(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     // Trata os erros de quando não acha algo no banco de dados
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.NOT_FOUND.value());
-        response.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return erro(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     // Trata violações das constraints do banco (V3 e V5):
@@ -59,12 +51,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
         String detalhe = String.valueOf(ex.getMostSpecificCause().getMessage()).toUpperCase();
+        return erro(HttpStatus.CONFLICT, mensagemDaConstraint(detalhe));
+    }
 
+    // Monta o corpo padrão de erro da API: { timestamp, status, error }
+    private ResponseEntity<Map<String, Object>> erro(HttpStatus status, String mensagem) {
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.CONFLICT.value());
-        response.put("error", mensagemDaConstraint(detalhe));
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        response.put("status", status.value());
+        response.put("error", mensagem);
+        return ResponseEntity.status(status).body(response);
     }
 
     private String mensagemDaConstraint(String detalhe) {

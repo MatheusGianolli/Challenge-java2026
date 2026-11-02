@@ -1,512 +1,244 @@
-# 🐾 PetCare API
+# 🐾 Clyvo PetCare
 
-API RESTful desenvolvida em Java com Spring Boot para o gerenciamento de clínicas veterinárias, tutores, pets, veterinários e consultas.
+Plataforma para o **cuidado contínuo da saúde dos pets**. Hoje o histórico de um animal fica espalhado entre clínicas, papéis e a memória do tutor; o Clyvo PetCare reúne em um só lugar o **prontuário** de cada pet (dados de saúde, alergias, consultas, diagnósticos e retornos), a agenda das clínicas e os **lembretes de retorno**, para que nenhum acompanhamento se perca.
 
-O projeto foi desenvolvido como parte do Challenge da Sprint de Java Advanced, aplicando conceitos de arquitetura em camadas, persistência de dados, validação, autenticação, paginação, documentação de APIs e operações CRUD.
+Por trás disso, o agendamento é validado no próprio banco de dados (package PL/SQL), todas as alterações de consultas são auditadas e os dados são exportados para um banco NoSQL.
 
-## 👥 Integrantes do Grupo
+Projeto desenvolvido para o **Challenge Clyvo 2026 — Sprint 4** (turma 2TDSPV, Análise e Desenvolvimento de Sistemas, FIAP).
+
+## 👥 Integrantes
 
 | Integrante | RM |
 |---|---|
-| Matheus Gianolli | 565258 |
 | Enzo Xavier Coelho | 563379 |
 | Gustavo Ribeiro Permagnani | 564995 |
+| Júlia Kauane Menezes Farias | 565568 |
 | Larissa Juvenal de Magalhães | 566457 |
-| Julia Menezes | 565568 |
+| Matheus Gianolli | 565258 |
 
-## 📌 Sobre o Projeto
+## 🔗 Links
 
-O PetCare API tem como objetivo centralizar o gerenciamento das informações de uma clínica veterinária, permitindo o controle de:
+| Item | Link |
+|---|---|
+| Aplicação online | _preencher com a URL do deploy_ |
+| Vídeo — Java Advanced | _preencher_ |
+| Vídeo — Database | _preencher_ |
+| Repositório | https://github.com/MatheusGianolli/Challenge-java2026 |
 
-- Tutores responsáveis pelos animais.
-- Pets cadastrados.
-- Clínicas veterinárias.
-- Veterinários.
-- Consultas e atendimentos.
-- Diagnósticos e status de consultas.
+## 🛠️ Tecnologias
 
-A aplicação segue o padrão REST, disponibilizando endpoints HTTP para operações de cadastro, consulta, atualização, paginação, alteração de status e exclusão de registros conforme as regras de negócio e os relacionamentos definidos no banco de dados.
+| Camada | Tecnologias |
+|---|---|
+| Backend | Java 17, Spring Boot 3.2, Spring Web, Spring Data JPA, Bean Validation |
+| Segurança | Spring Security (HTTP Basic, perfis ADMIN e VETERINARIO) |
+| Banco relacional | Oracle Database 19c, Flyway (versionamento), PL/SQL (package, trigger) |
+| Banco NoSQL | MongoDB (coleções com validação `$jsonSchema` e índices) |
+| Interface web | HTML, CSS e JavaScript puro, servidos pelo próprio Spring Boot |
+| Documentação | SpringDoc OpenAPI / Swagger UI |
+| Ferramentas | Maven, IntelliJ IDEA, Oracle SQL Developer / Data Modeler, MongoDB Compass, Git/GitHub |
 
-## 🛠️ Tecnologias Utilizadas
+## 🏗️ Arquitetura
 
-### Backend
-
-- Java 17
-- Spring Boot 3.2.5
-- Spring Web
-- Spring Data JPA
-- Spring Security
-- Bean Validation / Jakarta Validation
-- Oracle Database
-- Flyway
-- SpringDoc OpenAPI / Swagger
-- Maven
-
-### Interface demonstrativa
-
-Durante o desenvolvimento, foi criada uma interface web para demonstrar visualmente o consumo da API e o funcionamento das principais funcionalidades do sistema.
-
-A interface foi desenvolvida utilizando:
-
-- React
-- Vite
-- TypeScript
-- HTML5
-- CSS
-- Fetch API
-
-> A interface web foi utilizada para demonstração em vídeo e não faz parte dos arquivos disponibilizados neste repositório.
-
-### Testes e documentação
-
-- Postman
-- Swagger UI
-- Oracle Database
-- Git e GitHub
-
-## 🏗️ Arquitetura do Projeto
-
-O backend utiliza uma arquitetura organizada em camadas, separando as responsabilidades da aplicação.
-
-```text
-challenge-api/
-├── documentos/
-│   ├── Challenger_Clyvo.pdf
-│   └── arquivos de testes do Postman
-│
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── br/com/challenge/
-│   │   │       ├── config/
-│   │   │       ├── controllers/
-│   │   │       ├── dtos/
-│   │   │       ├── exceptions/
-│   │   │       ├── models/
-│   │   │       ├── repositories/
-│   │   │       └── services/
-│   │   │
-│   │   └── resources/
-│   │       ├── db/migration/
-│   │       └── application.properties
-│   │
-│   └── test/
-│
-├── pom.xml
-└── README.md
+```mermaid
+flowchart LR
+    U[Usuário<br/>navegador] -->|HTTP| W[Interface web<br/>/static]
+    W -->|REST + HTTP Basic| C[Controllers]
+    C --> S[Services<br/>regras de negócio]
+    S --> R[Repositories JPA]
+    S --> P[PkgClyvoRepository<br/>chamadas PL/SQL]
+    R --> O[(Oracle<br/>tabelas tb_*)]
+    P --> K[[pkg_clyvo<br/>procedures e funções]]
+    K --> O
+    O -. trigger .-> A[(tb_auditoria_consultas)]
+    K -->|exportar_colecao_json| J[/JSON/]
+    J -->|mongoimport| M[(MongoDB<br/>clyvo)]
+    F[Flyway] -->|migrations V1..V5 + R__pkg| O
 ```
 
-### Responsabilidade das camadas
+```text
+Challenge-java2026/
+├── database/
+│   ├── entrega/      → SQL completo e PDF dos modelos (disciplina de Database)
+│   ├── json/         → coleções exportadas do Oracle (tutores, veterinarios, clinicas)
+│   ├── modelagem/    → modelos lógico e físico (Data Modeler)
+│   └── mongodb/      → criação, importação e consultas do MongoDB
+├── src/main/java/br/com/challenge/
+│   ├── config/       → segurança, CORS, cache e OpenAPI
+│   ├── controllers/  → endpoints REST
+│   ├── dtos/         → dados de entrada e saída
+│   ├── exceptions/   → tratamento global de erros
+│   ├── models/       → entidades JPA
+│   ├── repositories/ → acesso a dados (JPA e package PL/SQL)
+│   ├── services/     → regras de negócio
+│   └── util/         → regras compartilhadas
+└── src/main/resources/
+    ├── db/migration/ → migrations do Flyway (V1..V5 e R__pkg_clyvo)
+    ├── static/       → interface web (index.html, css, js)
+    └── application.properties
+```
 
 | Camada | Responsabilidade |
 |---|---|
-| controllers | Receber requisições HTTP e retornar respostas |
-| services | Concentrar as regras de negócio |
-| repositories | Realizar o acesso ao banco de dados |
-| models | Representar as entidades persistidas |
-| dtos | Controlar os dados de entrada e saída da API |
-| exceptions | Centralizar o tratamento de erros |
-| config | Configurações de segurança, documentação e infraestrutura |
+| controllers | Recebem as requisições HTTP e devolvem as respostas |
+| services | Concentram as regras de negócio |
+| repositories | Acesso ao banco: JPA para o CRUD e `PkgClyvoRepository` para o package PL/SQL |
+| models | Entidades persistidas |
+| dtos | Contratos de entrada e saída da API |
+| exceptions | Tratamento centralizado de erros (400, 404, 409) |
+| util | Regras compartilhadas entre services (ex.: validação de status) |
+| config | Segurança, CORS, cache e documentação |
 
-## 🧩 Entidades Principais
+## 🧩 Modelo de dados
 
-O sistema possui as seguintes entidades:
+| Tabela | Conteúdo |
+|---|---|
+| `tb_tutores` | Responsáveis pelos pets (tutor, ONG ou abrigo) |
+| `tb_pets` | Animais, com dados de saúde, alergias e microchip |
+| `tb_clinicas` | Clínicas e hospitais veterinários |
+| `tb_veterinarios` | Profissionais, com CRMV e especialidade |
+| `tb_consultas` | Tabela fato: agendamentos, diagnósticos, status e valor |
+| `tb_auditoria_consultas` | Histórico de INSERT/UPDATE/DELETE em consultas (alimentada por trigger) |
 
-- Tutor
-- Pet
-- Clínica
-- Veterinário
-- Consulta
+Relacionamentos: um tutor possui vários pets; cada consulta liga um pet, seu responsável, uma clínica e um veterinário.
 
-### Relacionamentos principais
+Regras de integridade no banco (migration `V5`): CRMV, CNPJ, documento do tutor e microchip únicos; campos essenciais obrigatórios; status, sexo, valor, peso e data de retorno validados por `CHECK`.
 
-- Um tutor pode possuir vários pets.
-- Um pet pertence a um tutor.
-- Uma consulta está relacionada a um pet.
-- Uma consulta está relacionada a um tutor responsável.
-- Uma consulta está relacionada a uma clínica.
-- Uma consulta está relacionada a um veterinário.
+## 🗄️ Banco de dados (Oracle + PL/SQL)
 
-## 🔐 Autenticação e Autorização
+O Flyway cria e versiona todo o banco ao iniciar a aplicação:
 
-A API utiliza Spring Security com autenticação HTTP Basic.
+| Migration | Conteúdo |
+|---|---|
+| `V1__cria_tabelas.sql` | Tabelas e chaves estrangeiras |
+| `V2__ajusta_tipos_numericos.sql` | Ajuste de peso e altura |
+| `V3__valor_consulta_auditoria_e_comentarios.sql` | Valor da consulta, `CHECK`s, índices, tabela de auditoria e comentários |
+| `V4__carga_dados.sql` | Carga inicial (5+ registros por tabela) |
+| `V5__constraints_integridade.sql` | `UNIQUE`, `NOT NULL` e `CHECK`s de domínio |
+| `R__pkg_clyvo.sql` | Package `pkg_clyvo` e trigger de auditoria (migration repetível) |
 
-As credenciais são mantidas em memória para fins acadêmicos e de demonstração.
+### Package `pkg_clyvo`
 
-### Usuários disponíveis
-
-| Usuário | Senha | Perfil |
+| Rotina | Tipo | Uso na aplicação |
 |---|---|---|
-| admin | admin123 | Administrador |
-| veterinario | vet123 | Veterinário |
+| `agendar_consulta` | Procedure | `POST /api/consultas` — valida veterinário e clínica ativos, pet do responsável, data futura, conflito de horário e limite diário, e insere a consulta |
+| `valida_limite_agenda` / `vagas_disponiveis` | Funções | `GET /api/consultas/disponibilidade` — limite de 8 consultas por dia por veterinário |
+| `resumo_consultas` | Procedure (`SYS_REFCURSOR`) | `GET /api/relatorios/resumo-consultas` — faturamento por veterinário e tipo, com subtotais e total geral calculados manualmente |
+| `consulta_para_json` | Função | Conversão manual de uma consulta para JSON (sem funções nativas de JSON) |
+| `exportar_colecao_json` | Função (`CLOB`) | `GET /api/relatorios/exportacao/{colecao}` — gera o dataset para o MongoDB |
+| `definir_usuario_aplicacao` | Procedure | Grava o usuário logado na sessão para a auditoria |
+| `registrar_auditoria` | Procedure | Chamada pela trigger `trg_auditoria_consultas` |
 
-### Permissões
+Os erros de negócio do package (`ORA-20001` a `ORA-20012`) são convertidos pela API em respostas `404` e `409` com a mensagem do banco.
 
-- Usuários autenticados podem acessar os recursos permitidos da API.
-- O perfil ADMIN possui acesso ao gerenciamento de veterinários.
-- Operações de exclusão são restritas ao perfil ADMIN.
-- O gerenciamento de veterinários é protegido por autorização específica.
+Entregáveis da disciplina em `database/entrega/`: `2TDSPV_2026_CodigoSql_Clyvo.sql` (script completo, com demonstração das rotinas e das exceções) e `2TDSPV_2026_Proj_BD.pdf` (modelos lógico e físico).
 
-> Em um ambiente de produção, as credenciais não devem ser mantidas diretamente no código ou em memória. Para esta entrega, essa abordagem foi utilizada com finalidade didática.
+## 🍃 MongoDB
 
-## ⚙️ Funcionalidades
+O banco `clyvo` é alimentado pelo JSON gerado no Oracle:
 
-### Tutores
+| Coleção | Modelagem |
+|---|---|
+| `tutores` | Documento do tutor com os **pets embutidos** e, em cada pet, o **histórico de consultas embutido** — a ficha completa sai em uma única leitura |
+| `veterinarios` | Coleção própria (referenciada nas consultas), com estatísticas pré-calculadas |
+| `clinicas` | Coleção própria, com contato e endereço como subdocumentos |
 
-- Cadastro de tutores.
-- Consulta de tutor por ID.
-- Listagem paginada.
-- Atualização de dados.
-- Exclusão lógica.
+Scripts em `database/mongodb/`:
 
-### Pets
+```bash
+# 1. Cria as coleções com validação ($jsonSchema) e índices
+mongosh "mongodb://localhost:27017" --file database/mongodb/01_criacao.js
 
-- Cadastro de pets.
-- Consulta de pet por ID.
-- Listagem paginada.
-- Atualização de dados.
-- Exclusão de registros conforme as regras implementadas.
+# 2. Importa os JSON exportados do Oracle (PowerShell)
+.\database\mongodb\02_importacao.ps1
 
-### Clínicas
-
-- Cadastro de clínicas.
-- Consulta de clínica por ID.
-- Listagem paginada.
-- Busca de clínica por nome.
-- Busca de clínica por cidade.
-- Atualização de dados.
-- Ativação e desativação de clínicas.
-- Exclusão permanente quando não existem registros vinculados.
-- Preservação de clínicas relacionadas a consultas, respeitando a integridade referencial do banco de dados.
-
-### Veterinários
-
-- Cadastro de veterinários.
-- Consulta de veterinário por ID.
-- Listagem paginada.
-- Filtro por especialidade.
-- Atualização de dados.
-- Ativação e desativação de veterinários.
-- Exclusão lógica.
-- Controle de acesso por perfil administrativo.
-
-### Consultas
-
-- Agendamento de consultas.
-- Consulta por ID.
-- Listagem paginada.
-- Atualização de diagnóstico.
-- Alteração automática do status para REALIZADA.
-- Cancelamento lógico da consulta.
-- Manutenção do histórico dos atendimentos.
-
-## 🌐 Endpoints Principais
-
-A API é executada, por padrão, na porta 8080.
-
-```text
-http://localhost:8080
+# 3. Consultas de exemplo (ficha do tutor, alergias, agenda, faturamento...)
+mongosh "mongodb://localhost:27017" --file database/mongodb/03_consultas.js
 ```
 
-### Tutores
+Também é possível importar pelo MongoDB Compass: coleção → **Add Data → Import JSON**.
 
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/tutores` | Lista tutores com paginação |
-| GET | `/api/tutores/{id}` | Busca tutor por ID |
-| POST | `/api/tutores` | Cadastra um tutor |
-| PUT | `/api/tutores/{id}` | Atualiza um tutor |
-| DELETE | `/api/tutores/{id}` | Realiza a exclusão lógica |
+## 🖥️ Interface web
 
-### Pets
+Disponível na raiz da aplicação (`http://localhost:8080`). Telas:
 
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/pets` | Lista pets com paginação |
-| GET | `/api/pets/{id}` | Busca pet por ID |
-| POST | `/api/pets` | Cadastra um pet |
-| PUT | `/api/pets/{id}` | Atualiza um pet |
-| DELETE | `/api/pets/{id}` | Exclui um pet |
+- **Login** com os perfis da aplicação.
+- **Painel** com indicadores, próximas consultas, **retornos previstos nos próximos 30 dias** e faturamento por veterinário.
+- **Prontuário do pet**: dados de saúde, alergias em destaque, contato do responsável e linha do tempo de consultas, diagnósticos e retornos.
+- **Consultas**: agendamento com verificação de vagas do veterinário, registro do atendimento (diagnóstico e retorno) e cancelamento.
+- **Tutores, Pets, Clínicas e Veterinários**: listagem com busca, cadastro, edição, ativação/desativação e exclusão (conforme o perfil).
+- **Relatórios**: faturamento com subtotais e exportação das coleções em JSON para o MongoDB.
 
-### Clínicas
+## 🔐 Autenticação e perfis
 
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/clinicas` | Lista clínicas com paginação |
-| GET | `/api/clinicas/{id}` | Busca clínica por ID |
-| GET | `/api/clinicas/buscar` | Busca clínica por nome |
-| GET | `/api/clinicas/buscar/cidade` | Busca clínica por cidade |
-| POST | `/api/clinicas` | Cadastra uma clínica |
-| PUT | `/api/clinicas/{id}` | Atualiza uma clínica |
-| PATCH | `/api/clinicas/{id}/status` | Altera o status da clínica |
-| DELETE | `/api/clinicas/{id}` | Exclui permanentemente uma clínica, quando permitido |
+Spring Security com HTTP Basic. Usuários em memória, com as senhas lidas da configuração (`app.seguranca.*` no `application.properties`), que podem ser trocadas pelas variáveis de ambiente `ADMIN_PASSWORD` e `VET_PASSWORD`. Valores padrão para avaliação:
 
-> A exclusão permanente pode ser impedida quando a clínica possui consultas ou outros registros vinculados. Nesses casos, a clínica deve ser desativada para preservar o histórico dos atendimentos.
+| Usuário | Senha | Perfil | Permissões |
+|---|---|---|---|
+| `admin` | `admin123` | ADMIN | Acesso total |
+| `veterinario` | `vet123` | VETERINARIO | Consulta e cadastro, sem exclusões e sem gerenciar veterinários |
 
-### Veterinários
+## 🌐 Endpoints
 
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/veterinarios` | Lista veterinários com paginação |
-| GET | `/api/veterinarios/{id}` | Busca veterinário por ID |
-| POST | `/api/veterinarios` | Cadastra um veterinário |
-| PUT | `/api/veterinarios/{id}` | Atualiza um veterinário |
-| PATCH | `/api/veterinarios/{id}/status` | Altera o status do veterinário |
-| DELETE | `/api/veterinarios/{id}` | Realiza a exclusão lógica |
+Documentação interativa: `http://localhost:8080/swagger-ui/index.html`
 
-Exemplo de alteração de status:
+| Recurso | Endpoints |
+|---|---|
+| Autenticação | `GET /api/me` |
+| Tutores | `GET /api/tutores` · `GET /api/tutores/{id}` · `POST /api/tutores` · `PUT /api/tutores/{id}` · `DELETE /api/tutores/{id}` |
+| Pets | `GET /api/pets` · `GET /api/pets/{id}` · `GET /api/pets/{id}/historico` (prontuário) · `POST /api/pets` · `PUT /api/pets/{id}` · `DELETE /api/pets/{id}` |
+| Clínicas | `GET /api/clinicas` · `GET /api/clinicas/{id}` · `GET /api/clinicas/buscar?nome=` · `GET /api/clinicas/buscar/cidade?cidade=` · `POST` · `PUT /{id}` · `PATCH /{id}/status` · `DELETE /{id}` |
+| Veterinários | `GET /api/veterinarios?especialidade=` · `GET /{id}` · `POST` · `PUT /{id}` · `PATCH /{id}/status?status=` · `DELETE /{id}` |
+| Consultas | `GET /api/consultas` · `GET /{id}` · `GET /api/consultas/retornos?dias=30` · `GET /api/consultas/disponibilidade?veterinarioId=&data=` · `POST /api/consultas` · `PUT /{id}/diagnostico?diagnostico=&retorno=` · `DELETE /{id}` (cancelamento) |
+| Relatórios | `GET /api/relatorios/resumo-consultas?inicio=&fim=` · `GET /api/relatorios/exportacao/{TUTORES\|VETERINARIOS\|CLINICAS}` |
 
-```http
-PATCH /api/veterinarios/1/status?status=INATIVO
-```
+Listagens com paginação e ordenação (`?page=0&size=10&sort=nome`).
 
-Para reativação:
+## ▶️ Como executar
 
-```http
-PATCH /api/veterinarios/1/status?status=ATIVO
-```
-
-### Consultas
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/api/consultas` | Lista consultas com paginação |
-| GET | `/api/consultas/{id}` | Busca consulta por ID |
-| POST | `/api/consultas` | Agenda uma consulta |
-| PUT | `/api/consultas/{id}` | Atualiza o diagnóstico |
-| DELETE | `/api/consultas/{id}` | Cancela uma consulta |
-
-## 📄 Documentação da API
-
-A documentação interativa é disponibilizada pelo Swagger UI.
-
-Com a aplicação em execução, acesse:
-
-```text
-http://localhost:8080/swagger-ui/index.html
-```
-
-A documentação permite:
-
-- Visualizar todos os endpoints.
-- Consultar parâmetros.
-- Visualizar os modelos de requisição e resposta.
-- Testar as operações diretamente pelo navegador.
-- Conferir os códigos HTTP retornados.
-
-## ▶️ Como Executar o Backend
-
-### Pré-requisitos
-
-Antes de executar o projeto, certifique-se de possuir:
-
-- Java 17 instalado.
-- Maven instalado ou Maven Wrapper disponível.
-- Oracle Database configurado.
-- IDE compatível, como IntelliJ IDEA, Eclipse ou VS Code.
-- Git instalado.
-
-### 1. Clonar o repositório
+**Pré-requisitos:** Java 17+, Maven (ou o Maven Wrapper do projeto) e acesso a um Oracle Database. MongoDB é opcional (apenas para a parte NoSQL).
 
 ```bash
 git clone https://github.com/MatheusGianolli/Challenge-java2026.git
-```
-
-### 2. Acessar a pasta do projeto
-
-```bash
 cd Challenge-java2026
 ```
 
-### 3. Configurar o banco de dados
+Defina as credenciais do Oracle como variáveis de ambiente (elas não ficam no código):
 
-Configure as informações de conexão com o Oracle no arquivo:
-
-```text
-src/main/resources/application.properties
+```powershell
+# Windows (PowerShell)
+$env:DB_USERNAME="seu_usuario"
+$env:DB_PASSWORD="sua_senha"
+.\mvnw.cmd spring-boot:run
 ```
-
-Exemplo de configuração:
-
-```properties
-spring.datasource.url=jdbc:oracle:thin:@localhost:1521:XE
-spring.datasource.username=SEU_USUARIO
-spring.datasource.password=SUA_SENHA
-spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
-
-spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.show-sql=false
-
-spring.flyway.enabled=true
-```
-
-Os valores de conexão devem ser ajustados conforme a configuração do ambiente utilizado.
-
-### 4. Executar a aplicação
-
-Pelo Maven Wrapper no Windows:
 
 ```bash
-mvnw.cmd spring-boot:run
+# Linux / macOS
+export DB_USERNAME=seu_usuario
+export DB_PASSWORD=sua_senha
+./mvnw spring-boot:run
 ```
 
-Ou, caso o Maven esteja instalado:
+No IntelliJ: **Run → Edit Configurations → Environment variables** → `DB_USERNAME=...;DB_PASSWORD=...`.
 
-```bash
-mvn spring-boot:run
-```
+Ao subir, o Flyway cria as tabelas, carrega os dados e compila o package. Depois acesse:
 
-Também é possível executar a classe principal pela IDE:
+- Interface: `http://localhost:8080`
+- Swagger: `http://localhost:8080/swagger-ui/index.html`
 
-```text
-ChallengeApplication.java
-```
+## 🧪 Testes
 
-### 5. Acessar a API
+- Endpoints testados pelo Swagger e pelo Postman (coleção em `documentos/`).
+- Rotinas PL/SQL testadas pelo script `database/entrega/2TDSPV_2026_CodigoSql_Clyvo.sql` (parte 7: execução e exceções).
+- Consistência Oracle → MongoDB: o faturamento por veterinário calculado no Mongo (`03_consultas.js`) é igual ao da procedure `resumo_consultas`.
 
-```text
-http://localhost:8080
-```
+## 🤝 Integração com as demais disciplinas
 
-Swagger:
+Cada integrante documentou como a sua disciplina se integra ao projeto em `docs/integracao/`:
 
-```text
-http://localhost:8080/swagger-ui/index.html
-```
-
-## 🎥 Vídeo de Apresentação
-
-O vídeo apresenta o funcionamento do projeto PetCare, incluindo:
-
-- Estrutura e funcionamento da API.
-- Autenticação e autorização.
-- Gerenciamento de tutores.
-- Gerenciamento de pets.
-- Gerenciamento de clínicas.
-- Gerenciamento de veterinários.
-- Agendamento e gerenciamento de consultas.
-- Demonstração da interface web desenvolvida para consumo da API.
-
-**Link do vídeo:**
-
-https://youtu.be/pIJJJ_i8TMU
-
-## 🧪 Testes de Requisição
-
-As funcionalidades da API foram validadas utilizando o Postman e o Swagger.
-
-Foram realizados testes envolvendo:
-
-- Cadastro de tutores.
-- Listagem paginada de tutores.
-- Cadastro de clínicas.
-- Cadastro de veterinários.
-- Cadastro de pets.
-- Agendamento de consultas.
-- Atualização de diagnóstico.
-- Alteração do status de consultas.
-- Cancelamento lógico de consultas.
-- Atualização de dados.
-- Exclusão lógica de registros.
-- Exclusão permanente de clínicas sem registros vinculados.
-- Validação do bloqueio de exclusão de clínicas relacionadas a consultas.
-- Validação de autenticação e autorização.
-
-Os arquivos utilizados nos testes podem ser encontrados na pasta:
-
-```text
-documentos/
-```
-
-## 📊 Regras de Negócio Implementadas
-
-Entre as regras aplicadas no projeto, destacam-se:
-
-- Validação dos dados recebidos nas requisições.
-- Separação entre entidades e DTOs.
-- Paginação nas listagens.
-- Tratamento centralizado de exceções.
-- Busca de recursos por ID.
-- Controle de acesso com Spring Security.
-- Exclusão lógica em entidades que precisam preservar histórico.
-- Exclusão física de clínicas somente quando não existem registros dependentes.
-- Preservação do histórico de consultas por meio das restrições de integridade referencial do banco de dados.
-- Alteração automática do status da consulta após o lançamento do diagnóstico.
-- Controle de status dos veterinários.
-- Controle de status das clínicas.
-- Filtros por especialidade na listagem de veterinários.
-- Busca de clínicas por nome e cidade.
-
-## 🗃️ Persistência e Migrações
-
-O projeto utiliza o Oracle Database como banco de dados oficial.
-
-O controle de versão do banco é realizado por meio do Flyway, permitindo organizar e executar scripts de migração de forma controlada.
-
-As migrações ficam localizadas em:
-
-```text
-src/main/resources/db/migration/
-```
-
-Essa abordagem evita depender exclusivamente da criação automática das tabelas pelo Hibernate e permite maior controle sobre a evolução do banco de dados.
-
-## 🚀 Melhorias e Recursos Técnicos
-
-Durante o desenvolvimento, foram aplicados recursos adicionais para aprimorar a API:
-
-- Arquitetura em camadas.
-- DTOs para entrada e saída de dados.
-- Validações com Jakarta Bean Validation.
-- Paginação utilizando Pageable.
-- Consultas customizadas com Spring Data JPA.
-- Tratamento global de exceções.
-- Autenticação com Spring Security.
-- Autorização por perfil.
-- Documentação automática com Swagger.
-- Exclusão lógica.
-- Exclusão física condicionada aos relacionamentos do banco.
-- Controle de status de clínicas.
-- Controle de status de veterinários.
-- Versionamento de banco com Flyway.
-
-## ⚠️ Observações e Limitações
-
-- As credenciais de autenticação são mantidas em memória para fins acadêmicos.
-- A interface web foi desenvolvida para demonstração em vídeo e não está incluída neste repositório.
-- A execução disponibilizada neste repositório corresponde ao backend da aplicação.
-- A exclusão permanente de clínicas depende da existência de registros vinculados.
-- Clínicas relacionadas a consultas não podem ser removidas fisicamente, pois isso violaria as restrições de integridade referencial do banco de dados.
-- Nesses casos, recomenda-se utilizar a desativação da clínica para preservar o histórico dos atendimentos.
-- A desativação de uma clínica não remove seus registros do banco de dados.
-
-## 📁 Repositório
-
-Repositório oficial:
-
-```text
-https://github.com/MatheusGianolli/Challenge-java2026
-```
-
-## 📌 Considerações Finais
-
-O projeto demonstra a construção de uma API RESTful utilizando Java e Spring Boot, integrando persistência de dados, regras de negócio, segurança, documentação e testes de requisições.
-
-A solução foi estruturada de forma modular para facilitar a manutenção, a evolução das funcionalidades e a integração com diferentes interfaces consumidoras da API.
-##  Modelagem de Dados e Arquitetura
-### Diagrama de Classes
-Representação da arquitetura orientada a objetos das entidades do sistema mapeadas no Java:
-![Diagrama de Classes](documentos/diagrama_classes.png)
-
----
-
-##  Divisão de Tarefas e Cronograma
-A gestão ágil do projeto e a divisão técnica das responsabilidades desenvolvidas por cada integrante do grupo durante esta Sprint estão documentadas no arquivo em anexo.
-
-* **Consulte o arquivo:** `Challenger Clyvo.pdf` (localizado na pasta `documentos/`).
-
-## 📌 Considerações Finais
-
-O projeto demonstra a construção de uma API RESTful utilizando Java e Spring Boot, integrando persistência de dados, regras de negócio, segurança, documentação e testes de requisições.
-
-A solução foi estruturada de forma modular para facilitar a manutenção, a evolução das funcionalidades e a integração com diferentes interfaces consumidoras da API.
+| Disciplina | Resumo | Detalhes |
+|---|---|---|
+| Mastering Relational and Non-Relational Database | Mesmo banco Oracle da aplicação, package `pkg_clyvo` chamado pela API, trigger de auditoria, exportação JSON e MongoDB | [database.md](docs/integracao/database.md) |
+| DevOps Tools & Cloud Computing | Banco em nuvem, deploy e pipeline de CI/CD | [devops.md](docs/integracao/devops.md) |
+| Mobile Application Development | Aplicativo do tutor | [mobile.md](docs/integracao/mobile.md) |
+| Disruptive Architectures: IoT, IoB & Generative AI | IA apoiada no histórico clínico dos pets | [ia.md](docs/integracao/ia.md) |
+| Compliance, Quality Assurance & Tests | Plano de testes e automação sobre as regras de negócio | [qa.md](docs/integracao/qa.md) |

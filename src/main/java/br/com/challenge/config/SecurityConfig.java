@@ -1,5 +1,6 @@
 package br.com.challenge.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,17 +23,21 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            // Senhas lidas da configuração (application.properties),
+            // que podem ser trocadas por variáveis de ambiente no deploy
+            @Value("${app.seguranca.admin.senha}") String senhaAdmin,
+            @Value("${app.seguranca.veterinario.senha}") String senhaVeterinario
     ) {
         UserDetails admin = User.builder()
                 .username("admin")
-                .password(passwordEncoder.encode("admin123"))
+                .password(passwordEncoder.encode(senhaAdmin))
                 .roles("ADMIN")
                 .build();
 
         UserDetails veterinario = User.builder()
                 .username("veterinario")
-                .password(passwordEncoder.encode("vet123"))
+                .password(passwordEncoder.encode(senhaVeterinario))
                 .roles("VETERINARIO")
                 .build();
 
@@ -58,6 +63,18 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.OPTIONS,
                                 "/**"
+                        ).permitAll()
+
+                        // Permite carregar a interface web (arquivos estáticos).
+                        // Os dados continuam protegidos: a tela chama a API
+                        // enviando usuário e senha (HTTP Basic).
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/css/**",
+                                "/js/**",
+                                "/img/**",
+                                "/favicon.ico"
                         ).permitAll()
 
                         // Permite acesso à documentação da API

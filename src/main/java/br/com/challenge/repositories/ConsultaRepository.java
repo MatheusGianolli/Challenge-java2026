@@ -38,6 +38,15 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
             Pageable pageable
     );
 
+    // Histórico completo do pet, da consulta mais recente para a mais antiga.
+    List<Consulta> findByPetIdOrderByDataPrevistaDesc(Long petId);
+
+    // Retornos marcados num período (lembretes de cuidado contínuo).
+    List<Consulta> findByRetornoPrevistoBetweenOrderByRetornoPrevistoAsc(
+            LocalDateTime inicio,
+            LocalDateTime fim
+    );
+
     // Verifica se o veterinário já possui consulta no mesmo horário.
     // Consultas canceladas não bloqueiam o horário.
     @Query("""

@@ -6,7 +6,7 @@ import br.com.challenge.services.PetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/pets")
 @Tag(name = "Pets", description = "Endpoints para gerenciamento de Pets")
+@RequiredArgsConstructor
 public class PetController {
 
-    @Autowired private PetService service;
+    private final PetService service;
 
     @Operation(summary = "Lista todos os pets com paginação")
     @GetMapping
@@ -37,6 +38,15 @@ public class PetController {
         return ResponseEntity.ok(new PetDTO.Response(pet));
     }
 
+    @Operation(
+            summary = "Prontuário do pet",
+            description = "Dados de saúde, contato do responsável e histórico completo de consultas, diagnósticos e retornos"
+    )
+    @GetMapping("/{id}/historico")
+    public ResponseEntity<PetDTO.Historico> historico(@PathVariable Long id) {
+        return ResponseEntity.ok(service.historico(id));
+    }
+
     @Operation(summary = "Cadastra um novo pet")
     @PostMapping
     public ResponseEntity<PetDTO.Response> cadastrar(@RequestBody @Valid PetDTO.Request dto) {
@@ -51,7 +61,7 @@ public class PetController {
         return ResponseEntity.ok(new PetDTO.Response(petAtualizado));
     }
 
-    @Operation(summary = "Exclui um pet logicamente")
+    @Operation(summary = "Exclui um pet (bloqueado se houver consultas vinculadas)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.excluir(id);

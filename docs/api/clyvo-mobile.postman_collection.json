@@ -1,0 +1,253 @@
+{
+  "info": {
+    "name": "Clyvo PetCare — API consumida pelo app mobile",
+    "description": "Endpoints da API Java usados pelo aplicativo do tutor. Autenticação HTTP Basic (variáveis usuario/senha). baseUrl aponta para a aplicação publicada no Render; para rodar local, troque por http://localhost:8080.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{usuario}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{senha}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://clyvo-petcare.onrender.com"
+    },
+    {
+      "key": "usuario",
+      "value": "admin"
+    },
+    {
+      "key": "senha",
+      "value": "admin123"
+    },
+    {
+      "key": "petId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Login",
+      "item": [
+        {
+          "name": "Usuário logado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "me"
+              ]
+            },
+            "description": "Valida as credenciais e devolve o usuário e os perfis. Usado na tela de login do app."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pets",
+      "item": [
+        {
+          "name": "Listar pets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pets"
+              ]
+            },
+            "description": "Lista paginada de pets."
+          }
+        },
+        {
+          "name": "Detalhe do pet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pets/{{petId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pets",
+                "{{petId}}"
+              ]
+            },
+            "description": "Dados do pet."
+          }
+        },
+        {
+          "name": "Prontuário do pet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pets/{{petId}}/historico",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pets",
+                "{{petId}}",
+                "historico"
+              ]
+            },
+            "description": "Prontuário consolidado: alergias, consultas, último atendimento, próxima consulta e próximo retorno. Base da tela de saúde do pet."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultas",
+      "item": [
+        {
+          "name": "Listar consultas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/consultas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas"
+              ]
+            },
+            "description": "Consultas cadastradas."
+          }
+        },
+        {
+          "name": "Retornos próximos (lembretes)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/consultas/retornos?dias=30",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas",
+                "retornos"
+              ],
+              "query": [
+                {
+                  "key": "dias",
+                  "value": "30"
+                }
+              ]
+            },
+            "description": "Retornos previstos nos próximos N dias. Usado para disparar a notificação de lembrete de retorno ao tutor."
+          }
+        },
+        {
+          "name": "Vagas do veterinário",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/consultas/disponibilidade?veterinarioId=1&data=2026-12-01",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas",
+                "disponibilidade"
+              ],
+              "query": [
+                {
+                  "key": "veterinarioId",
+                  "value": "1"
+                },
+                {
+                  "key": "data",
+                  "value": "2026-12-01"
+                }
+              ]
+            },
+            "description": "Verifica se o veterinário ainda tem vaga no dia (função valida_limite_agenda do Oracle)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Apoio ao agendamento",
+      "item": [
+        {
+          "name": "Clínicas por cidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/clinicas/buscar/cidade?cidade=São Paulo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clinicas",
+                "buscar",
+                "cidade"
+              ],
+              "query": [
+                {
+                  "key": "cidade",
+                  "value": "São Paulo"
+                }
+              ]
+            },
+            "description": "Clínicas da cidade do tutor."
+          }
+        },
+        {
+          "name": "Veterinários",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/veterinarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "veterinarios"
+              ]
+            },
+            "description": "Lista de veterinários."
+          }
+        }
+      ]
+    }
+  ]
+}

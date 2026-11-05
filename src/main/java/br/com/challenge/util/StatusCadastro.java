@@ -1,59 +1,40 @@
 package br.com.challenge.util;
 
 import br.com.challenge.exceptions.BusinessRuleException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Testes unitários da regra de status dos cadastros (tutores, clínicas e veterinários).
- * Não dependem de banco: rodam no build e na pipeline de CI.
+ * Regras do status de cadastros (clínicas, veterinários e tutores).
+ * Centraliza a validação para não repetir a mesma lógica em cada service.
  */
-class StatusCadastroTest {
+public final class StatusCadastro {
 
-    @Test
-    @DisplayName("Aceita ATIVO e INATIVO")
-    void aceitaStatusValidos() {
-        assertEquals("ATIVO", StatusCadastro.validar("ATIVO"));
-        assertEquals("INATIVO", StatusCadastro.validar("INATIVO"));
+    public static final String ATIVO = "ATIVO";
+    public static final String INATIVO = "INATIVO";
+
+    private StatusCadastro() {
     }
 
-    @Test
-    @DisplayName("Normaliza espaços e letras minúsculas")
-    void normalizaStatus() {
-        assertEquals("ATIVO", StatusCadastro.validar("  ativo "));
-        assertEquals("INATIVO", StatusCadastro.validar("Inativo"));
+    /**
+     * Normaliza e valida o status informado.
+     *
+     * @return o status em maiúsculas (ATIVO ou INATIVO)
+     * @throws BusinessRuleException quando vazio ou diferente de ATIVO/INATIVO
+     */
+    public static String validar(String status) {
+        if (status == null || status.isBlank()) {
+            throw new BusinessRuleException("O status deve ser informado.");
+        }
+
+        String normalizado = status.trim().toUpperCase();
+
+        if (!ATIVO.equals(normalizado) && !INATIVO.equals(normalizado)) {
+            throw new BusinessRuleException("Status inválido. Utilize ATIVO ou INATIVO.");
+        }
+
+        return normalizado;
     }
 
-    @Test
-    @DisplayName("Rejeita status nulo ou vazio")
-    void rejeitaStatusVazio() {
-        BusinessRuleException nulo = assertThrows(BusinessRuleException.class,
-                () -> StatusCadastro.validar(null));
-        assertEquals("O status deve ser informado.", nulo.getMessage());
-
-        assertThrows(BusinessRuleException.class, () -> StatusCadastro.validar("   "));
-    }
-
-    @Test
-    @DisplayName("Rejeita status fora da lista")
-    void rejeitaStatusInvalido() {
-        BusinessRuleException erro = assertThrows(BusinessRuleException.class,
-                () -> StatusCadastro.validar("BLOQUEADO"));
-        assertEquals("Status inválido. Utilize ATIVO ou INATIVO.", erro.getMessage());
-    }
-
-    @Test
-    @DisplayName("Identifica cadastro ativo sem diferenciar maiúsculas")
-    void identificaAtivo() {
-        assertTrue(StatusCadastro.estaAtivo("ATIVO"));
-        assertTrue(StatusCadastro.estaAtivo("ativo"));
-        assertFalse(StatusCadastro.estaAtivo("INATIVO"));
-        assertFalse(StatusCadastro.estaAtivo(null));
+    public static boolean estaAtivo(String status) {
+        return ATIVO.equalsIgnoreCase(status);
     }
 }
-

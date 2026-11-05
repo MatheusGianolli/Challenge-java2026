@@ -1,21 +1,18 @@
 # Disruptive Architectures: IoT, IoB & Generative AI
 
-**Responsável:** _nome completo (RM)_
+**Responsável:** Enzo Xavier Coelho (RM563379)
 
-## Como a disciplina aparece no projeto
+## Como a disciplina se conecta ao projeto
 
-_Responda em poucas linhas:_
+A proposta é usar IA sobre o **histórico de saúde do pet** que o Clyvo centraliza. A API Java já entrega o prontuário consolidado em `GET /api/pets/{id}/historico` (perfil do animal, alergias, consultas, diagnósticos e próximo retorno), que é a entrada da IA para gerar:
 
-- Qual problema do tutor ou da clínica a IA resolve?
-- Qual abordagem foi usada (LLM, recomendação, classificação...) e por quê?
-- Quais dados do projeto alimentam a IA (perfil do pet, alergias, histórico de consultas e diagnósticos)?
-- Como a IA se integra à aplicação?
+- um resumo do prontuário para o veterinário;
+- os pontos de atenção (alergias, tratamento em andamento, retorno atrasado ou próximo);
+- uma mensagem de lembrete para o tutor.
 
-_(escreva aqui)_
+O fluxo, o prompt e um exemplo de entrada e saída estão descritos em [`docs/ia/contexto_prontuario.md`](../ia/contexto_prontuario.md).
 
 ## Evidências
 
-- Diagrama da arquitetura da IA
-- Exemplos de entrada e saída
-- Link do repositório da IA
-- Link do vídeo
+- Proposta de integração: `docs/ia/contexto_prontuario.md`
+- Endpoint de origem dos dados: `GET /api/pets/{id}/historico` (Swagger)

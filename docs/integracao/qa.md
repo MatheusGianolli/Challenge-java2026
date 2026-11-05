@@ -1,19 +1,23 @@
 # Compliance, Quality Assurance & Tests
 
-**Responsável:** _nome completo (RM)_
+**Responsável:** Júlia Kauane Menezes Farias (RM565568)
 
-## Como a disciplina aparece no projeto
+## Como a disciplina se conecta ao projeto
 
-_Responda em poucas linhas:_
+**Testes automatizados no repositório:** `src/test/java/br/com/challenge/util/StatusCadastroTest.java` testa a regra de status dos cadastros (valores aceitos, normalização, status vazio e inválido), sem depender do banco.
 
-- Quais funcionalidades foram cobertas pelo plano de testes manuais?
-- Quais casos de teste foram automatizados e com qual ferramenta?
-- Quais regras de negócio da API foram validadas (ex.: conflito de horário, CRMV repetido, data no passado)?
+**Regras de negócio que a API garante** e que servem de base para o plano de testes:
 
-_(escreva aqui)_
+| Caso | Resultado esperado |
+|---|---|
+| Agendar com o veterinário já ocupado no mesmo horário | 409 "O veterinario ja possui consulta neste horario." |
+| Agendar com data no passado | 409 "A data prevista deve ser no futuro." |
+| Veterinário com a agenda do dia cheia (8 consultas) | indisponível em `GET /api/consultas/disponibilidade` |
+| Cadastrar veterinário com CRMV repetido | 409 "Já existe um veterinário com este CRMV" |
+| Perfil `veterinario` tentando excluir registros | 403 |
+| Campo obrigatório em branco | 400 com a mensagem do campo |
 
 ## Evidências
 
-- Link do Azure Boards / Test Plans
-- Prints ou exportação dos casos de teste
-- Link do vídeo da automação
+- Testes unitários: `src/test/java/br/com/challenge/util/StatusCadastroTest.java`
+- Endpoints testáveis pelo Swagger (`/swagger-ui/index.html`) e pela coleção em `docs/api/`

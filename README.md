@@ -20,10 +20,11 @@ Projeto desenvolvido para o **Challenge Clyvo 2026 — Sprint 4** (turma 2TDSPV,
 
 | Item | Link |
 |---|---|
-| Aplicação online | _preencher com a URL do deploy_ |
-| Vídeo — Java Advanced | _preencher_ |
-| Vídeo — Database | _preencher_ |
+| Aplicação online | https://clyvo-petcare.onrender.com (login `admin` / `admin123` ou `veterinario` / `vet123`; no plano grátis do Render o primeiro acesso pode levar ~1 min) |
+| Vídeo — Java Advanced | https://youtu.be/2eXYX_eRwgI |
+| Vídeo — Database | https://youtu.be/tnjIXlqSXb8 |
 | Repositório | https://github.com/MatheusGianolli/Challenge-java2026 |
+| Projeto no Azure DevOps | https://dev.azure.com/RM564995/clyvo-petcare-devops |
 
 ## 🛠️ Tecnologias
 
@@ -246,7 +247,7 @@ Também há um script para o Azure App Service em `deploy/deploy_azure_app_servi
 
 ## 🤝 Integração com as demais disciplinas
 
-Cada integrante documentou como a sua disciplina se integra ao projeto em `docs/integracao/`:
+Como cada disciplina se conecta ao projeto, com o responsável e os pontos de integração da API, está em `docs/integracao/`:
 
 | Disciplina | Resumo | Detalhes |
 |---|---|---|
